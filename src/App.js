@@ -1,58 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
-import './App.css';
-
+import React from 'react'
+import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
+import SidebarContainer from './features/sideBar/Sidebar'
+import TopbarContainer from './features/topBar/Topbar'
+import { createTheme } from '@mui/system'
+import { MainContent } from './styles/MainContent'
+import GroupCard from './features/groupCard/GroupCard'
+import { useState, useEffect, useRef } from 'react'
+import ExpenseCard from './features/expenseCard/ExpenseCard'
+import ExpenseTab from './features/expenseTab/ExpenseTab'
+import ExpenseForm from './features/expenseForm/ExpenseForm'
+import Login from './features/login/Login'
+import RouteGuard from './features/routeGuard/RouteGuard'
+import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
+import './App.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { auth } from './firebase/config'
+import { saveUserAuth } from './redux/slices/userAuthSlice'
 function App() {
+  const [sideBarWidth, setSideBarWidth] = useState(0)
+
+  const dispatch = useDispatch()
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <Counter />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <span>
-          <span>Learn </span>
-          <a
-            className="App-link"
-            href="https://reactjs.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux
-          </a>
-          <span>, </span>
-          <a
-            className="App-link"
-            href="https://redux-toolkit.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Redux Toolkit
-          </a>
-          ,<span> and </span>
-          <a
-            className="App-link"
-            href="https://react-redux.js.org/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            React Redux
-          </a>
-        </span>
-      </header>
+      <SidebarContainer setSBWidth={setSideBarWidth} />
+      <Router>
+        <MainContent SBWidth={sideBarWidth}>
+          <TopbarContainer />
+          <Route exact path="/">
+            <RouteGuard components={[<GroupCard />]} />
+          </Route>
+          <Route exact path="/expenses">
+            <RouteGuard components={[<ExpenseCard />]} />
+          </Route>
+          <Route exact path="/expense">
+            <RouteGuard components={[<ExpenseTab />]} />
+          </Route>
+          <Route exact path="/form">
+            <RouteGuard components={[<ExpenseForm />]} />
+          </Route>
+          <Route exact path="/login">
+            <RouteGuard path={'/login'} components={[<Login />]} />
+          </Route>
+        </MainContent>
+      </Router>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

@@ -16,10 +16,12 @@ import './App.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { auth } from './firebase/config'
 import { saveUserAuth } from './redux/slices/userAuthSlice'
-import { getUserById } from './redux/slices/userSlice'
+import { getUserById } from './redux/slices/currentUserSlice'
+import { getAllGroups } from './redux/slices/groupSlice'
 function App() {
   const [sideBarWidth, setSideBarWidth] = useState(0)
   const { status } = useSelector((state) => state.auth)
+  const userStatus = useSelector((state) => state.currentUser.status)
   const dispatch = useDispatch()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -31,13 +33,17 @@ function App() {
       }
     })
   }, [auth, dispatch])
-
+  useEffect(() => {
+    if (userStatus === 'succeeded') {
+      dispatch(getAllGroups())
+    }
+  }, [userStatus])
   return (
     <div className="App">
       {status === 'succeeded' ? (
         <>
-          <SidebarContainer setSBWidth={setSideBarWidth} />
           <Router>
+            <SidebarContainer setSBWidth={setSideBarWidth} />
             <MainContent SBWidth={sideBarWidth}>
               <TopbarContainer />
               <Route exact path="/">

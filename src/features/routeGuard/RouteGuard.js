@@ -8,7 +8,6 @@ import { Redirect } from 'react-router-dom'
  */
 const RouteGuard = ({ path, components }) => {
   const userId = useSelector((state) => state.auth.userId)
-  console.log(userId, path)
   if (path === '/login') {
     return <>{userId ? <Redirect to="/" /> : components.map((component) => <> {component} </>)}</>
   }

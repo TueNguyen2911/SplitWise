@@ -119,11 +119,8 @@ class PopulateJsonFireStore {
   // Custom Generated IDS
   // change "event_id" accordingly
   set(item) {
-    console.log(`setting item with id ${item.event_id}`)
-    return setDoc(
-      doc(this.db, `${this.collectionname}`, `${item.event_id}`),
-      Object.assign({}, item)
-    )
+    console.log(`setting item with id ${item.id}`)
+    return setDoc(doc(this.db, `${this.collectionname}`, `${item.id}`), Object.assign({}, item))
   }
 
   // Exit nodejs console

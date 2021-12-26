@@ -28,11 +28,7 @@ export const userAuthSlice = createSlice({
   reducers: {
     saveUserAuth: (state, action) => {
       state.userId = action.payload
-      state.error = null
-      state.status = 'idle'
-      if (state.userId) {
-        state.status = 'succeeded'
-      }
+      state.status = 'succeeded'
     }
   },
   extraReducers: (builder) => {

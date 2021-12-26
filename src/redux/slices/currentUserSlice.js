@@ -15,11 +15,11 @@ export const getUserById = createAsyncThunk('user/getUserById', async (arg, thun
 const initialState = {
   data: {}
 }
-export const userSlice = createSlice({
-  name: 'user',
+export const currentUserSlice = createSlice({
+  name: 'currentUser',
   initialState,
   reducers: {
-    saveUserData: (state, action) => {
+    saveCurrentUserData: (state, action) => {
       state.data = action.payload
       state.status = 'succeeded'
     }
@@ -37,5 +37,5 @@ export const userSlice = createSlice({
   }
 })
 
-export const { saveUserData } = userSlice.actions
-export default userSlice.reducer
+export const { saveCurrentUserData } = currentUserSlice.actions
+export default currentUserSlice.reducer

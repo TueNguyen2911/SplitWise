@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^7.2.1",
     "firebase": "^9.6.1",
     "formik": "^2.2.9",
+    "query-string": "^7.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-redux": "^7.2.6",
@@ -25,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "upload": "node src/utils/uploader.mjs"
   },
   "eslintConfig": {
     "extends": "react-app"

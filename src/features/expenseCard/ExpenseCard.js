@@ -5,7 +5,9 @@ import CardMedia from '@mui/material/CardMedia'
 import Divider from '@mui/material/Divider'
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import queryString from 'query-string'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -28,104 +30,25 @@ const CardContainer = styled('div')({
 })
 
 const ExpenseCard = () => {
-  const [groups, setGroups] = React.useState([
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    },
-    {
-      name: 'Trip #1',
-      data: '20-10-2021',
-      screenshot: 'https://thedatalabs.org/wp-content/uploads/2018/05/Spreadsheet_New.png'
-    }
-  ])
   const history = useHistory()
+  const { search } = useLocation()
+  const index = Number(queryString.parse(search).index)
+  const expense = useSelector((state) => state.groups.data[index].expense)
   return (
     <CardContainer onClick={() => history.push('expense')}>
-      {groups.map((elem) => (
+      {expense.map((elem) => (
         <StyledCard>
           <Box>
             <CardMedia
               component="img"
               sx={{ objectFit: 'cover' }}
-              image={elem.screenshot}
+              image={elem.image}
               alt="Live from space album cover"
             />
           </Box>
           <Divider />
           <CardContent sx={{ textAlign: 'left' }}>
-            {elem.name} <br /> {elem.data}{' '}
+            {elem.name} <br /> {elem.date}
           </CardContent>
         </StyledCard>
       ))}

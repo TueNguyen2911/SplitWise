@@ -17,6 +17,7 @@ import {
   Tooltip
 } from '@mui/material'
 import Preview from './Preview'
+import ExpenseTab from '../expenseTab/ExpenseTab'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
@@ -56,10 +57,31 @@ const ExpenseForm = () => {
     billImg: yup.object()
   })
   const initialValues = {
+    name: 'Pizza',
     billDesc: [''],
     billPrice: [0],
+    total: 6,
     billImg: null,
-    total: 0
+    members: [
+      {
+        uid: '123',
+        owned: 2,
+        note: 'Haha 123',
+        fixed: false
+      },
+      {
+        uid: '1231',
+        owned: 2,
+        note: 'Haha 123',
+        fixed: false
+      },
+      {
+        uid: '1223',
+        owned: 2,
+        note: 'Haha 123',
+        fixed: false
+      }
+    ]
   }
   const formik = useFormik({
     initialValues: initialValues,
@@ -114,11 +136,17 @@ const ExpenseForm = () => {
   useEffect(() => {
     console.log(formik.values)
     const locTotal = formik.values.billPrice.reduce((prev, curr) => prev + curr)
-    const distributedprice = (locTotal / users.length).toFixed(2)
+    const notFixedNum = formik.values.members.reduce((count, curr) => {
+      return !curr.fixed ? ++count : count
+    }, 0)
+    const distributedprice = (locTotal / notFixedNum).toFixed(2)
     formik.setValues({ ...formik.values, total: locTotal })
-    priceUser.forEach((elem, index) => {
-      elem.owned = distributedprice
+    const newMember = formik.values.members.map((elem, index) => {
+      if (!elem.fixed) {
+        elem.owned = distributedprice
+      }
     })
+    formik.setValues({ ...formik.values, members: newMember })
   }, [formik.values.billPrice])
 
   useEffect(() => {
@@ -128,151 +156,156 @@ const ExpenseForm = () => {
     })
   }, [formik.values.total])
   return (
-    <form onSubmit={formik.handleSubmit} style={{ textAlign: 'left', margin: '10px 20px' }}>
-      <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
-      <Tooltip
-        title={isBillForm ? 'Only the bill image or the bill form' : 'Upload a receipt image'}
-        placement="right"
-      >
-        <span>
-          <Button
-            disabled={isBillForm}
-            htmlFor="billImg"
-            color="primary"
-            variant="contained"
-            onClick={clickUploadBill}
-          >
-            {formik.values.billImg ? 'Changed the bill image' : 'Upload the bill image'}
-          </Button>
-          <input
-            name="billImg"
-            id="billImg"
-            ref={uploadBillImgRef}
-            onChange={(e) => setImgValue(e)}
-            type="file"
-            accept="image/*"
-            style={{ display: 'none' }}
-          />
-        </span>
-      </Tooltip>
-      <br /> <br />
-      {formik.values.billImg ? (
-        <>
-          <label>Total: </label>
-          <TextField
-            name="total"
-            id="total"
-            type="number"
-            onChange={formik.handleChange}
-            value={formik.values.total}
-          />
-        </>
-      ) : null}
-      <br /> <br />
-      <Tooltip
-        title={
-          formik.values.billImg
-            ? 'Only the bill image or the bill form'
-            : 'Open a form table to enter bill details'
-        }
-        placement="right"
-      >
-        <span>
-          <Button
-            disabled={formik.values.billImg != null}
-            color="primary"
-            variant="contained"
-            onClick={toggleBillForm}
-          >
-            {isBillForm ? 'Remove the bill table' : 'Enter the bill manually'}
-          </Button>
-        </span>
-      </Tooltip>
-      {isBillForm ? (
-        <TableContainer>
-          <Table sx={{ maxWidth: '60vw' }}>
+    <>
+      <form onSubmit={formik.handleSubmit} style={{ textAlign: 'left', margin: '10px 20px' }}>
+        <Button sx={{ float: 'right' }} variant="outlined" color="error">
+          Delete
+        </Button>
+        <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
+        <Tooltip
+          title={isBillForm ? 'Only the bill image or the bill form' : 'Upload a receipt image'}
+          placement="right"
+        >
+          <span>
+            <Button
+              disabled={isBillForm}
+              htmlFor="billImg"
+              color="primary"
+              variant="contained"
+              onClick={clickUploadBill}
+            >
+              {formik.values.billImg ? 'Changed the bill image' : 'Upload the bill image'}
+            </Button>
+            <input
+              name="billImg"
+              id="billImg"
+              ref={uploadBillImgRef}
+              onChange={(e) => setImgValue(e)}
+              type="file"
+              accept="image/*"
+              style={{ display: 'none' }}
+            />
+          </span>
+        </Tooltip>
+        <br /> <br />
+        {formik.values.billImg ? (
+          <>
+            <label>Total: </label>
+            <TextField
+              name="total"
+              id="total"
+              type="number"
+              onChange={formik.handleChange}
+              value={formik.values.total}
+            />
+          </>
+        ) : null}
+        <br /> <br />
+        <Tooltip
+          title={
+            formik.values.billImg
+              ? 'Only the bill image or the bill form'
+              : 'Open a form table to enter bill details'
+          }
+          placement="right"
+        >
+          <span>
+            <Button
+              disabled={formik.values.billImg != null}
+              color="primary"
+              variant="contained"
+              onClick={toggleBillForm}
+            >
+              {isBillForm ? 'Remove the bill table' : 'Enter the bill manually'}
+            </Button>
+          </span>
+        </Tooltip>
+        {isBillForm ? (
+          <TableContainer>
+            <Table sx={{ maxWidth: '60vw' }}>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Price</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {formik.values.billDesc
+                  ? formik.values.billDesc.map((elem, index) => (
+                      <TableRow>
+                        <TableCell>
+                          <TextField
+                            value={formik.values.billDesc[index]}
+                            multiline
+                            onChange={(e) => handleDescChange(e, index)}
+                            sx={{ width: '40vw' }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <TextField
+                            sx={{ width: '200px ' }}
+                            value={formik.values.billPrice[index]}
+                            onChange={(e) => handlePriceChange(e, index)}
+                            type="number"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Button onClick={(e) => editBillForm(e, 'add')}>
+                            <AddIcon />
+                          </Button>
+                          <Button onClick={(e) => editBillForm(e, 'remove', index)}>
+                            <RemoveIcon />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  : null}
+                <label>Total: </label>
+                <TextField
+                  InputProps={{
+                    readOnly: true
+                  }}
+                  name="total"
+                  id="total"
+                  type="number"
+                  value={formik.values.total}
+                />
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : null}
+        <br /> <br />
+        <TableContainer id="split-table">
+          <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Description</TableCell>
-                <TableCell>Price</TableCell>
                 <TableCell></TableCell>
+                <TableCell>Owned</TableCell>
+                <TableCell>Notes</TableCell>
               </TableRow>
             </TableHead>
 
             <TableBody>
-              {formik.values.billDesc
-                ? formik.values.billDesc.map((elem, index) => (
-                    <TableRow>
-                      <TableCell>
-                        <TextField
-                          value={formik.values.billDesc[index]}
-                          multiline
-                          onChange={(e) => handleDescChange(e, index)}
-                          sx={{ width: '40vw' }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          sx={{ width: '200px ' }}
-                          value={formik.values.billPrice[index]}
-                          onChange={(e) => handlePriceChange(e, index)}
-                          type="number"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button onClick={(e) => editBillForm(e, 'add')}>
-                          <AddIcon />
-                        </Button>
-                        <Button onClick={(e) => editBillForm(e, 'remove', index)}>
-                          <RemoveIcon />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                : null}
-              <label>Total: </label>
-              <TextField
-                InputProps={{
-                  readOnly: true
-                }}
-                name="total"
-                id="total"
-                type="number"
-                value={formik.values.total}
-              />
+              {formik.values.members.map((elem, index) => (
+                <TableRow>
+                  <TableCell>
+                    <Avatar src={elem.avatar} /> {elem.name}
+                  </TableCell>
+                  <TableCell>
+                    <TextField value={elem.owned} />
+                  </TableCell>
+                  <TableCell>
+                    <TextField />
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
-      ) : null}
-      <br /> <br />
-      <TableContainer id="split-table">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>Owned</TableCell>
-              <TableCell>Notes</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {users.map((elem, index) => (
-              <TableRow>
-                <TableCell>
-                  <Avatar src={elem.avatar} /> {elem.name}
-                </TableCell>
-                <TableCell>
-                  <TextField value={priceUser[index].owned} />
-                </TableCell>
-                <TableCell>
-                  <TextField />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </form>
+      </form>
+    </>
   )
 }
 

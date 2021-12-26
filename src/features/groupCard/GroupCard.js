@@ -3,10 +3,12 @@ import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Avatar from '@mui/material/Avatar'
 import Divider from '@mui/material/Divider'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUsersByIds } from '../../redux/slices/usersSlice'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -29,135 +31,34 @@ const CardContainer = styled('div')({
 })
 
 export default function GroupCard() {
-  const [groups, setGroups] = React.useState([
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Qiyana_1.jpg',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    },
-    {
-      name: 'Qiqi lovers',
-      avatar: 'https://pbs.twimg.com/media/EJEIZ4lX0AAEEuQ?format=jpg&name=large',
-      members: [
-        {
-          name: 'Tue',
-          avatar:
-            'https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/c0467381257987.5cf9cc3b7ec5c.png'
-        },
-        {
-          name: 'Tue2',
-          avatar: 'https://i.imgur.com/ag8Ggoy.png'
-        }
-      ]
-    }
-  ])
+  const { data, status } = useSelector((state) => state.groups)
+  const dispatch = useDispatch()
   const history = useHistory()
   return (
     <CardContainer>
-      {groups.map((elem) => (
-        <StyledCard onClick={() => history.push('/expenses')}>
-          <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
-            <CardMedia
-              component="img"
-              sx={{ width: '165px', height: '165px', objectFit: 'cover' }}
-              image={elem.avatar}
-              alt="Live from space album cover"
-            />
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
-              {elem.members.map((elem) => (
-                <Avatar alt={elem.name} src={elem.avatar} />
-              ))}
+      {status === 'succeeded' ? (
+        data.map((elem, index) => (
+          <StyledCard onClick={() => history.push(`/expenses?index=${index}`)}>
+            <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
+              <CardMedia
+                component="img"
+                sx={{ width: '165px', height: '165px', objectFit: 'cover' }}
+                image={elem.avatar}
+                alt="Live from space album cover"
+              />
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
+                {elem.members.map((elem) => (
+                  <Avatar alt={elem.name} src={elem.avatar} />
+                ))}
+              </Box>
             </Box>
-          </Box>
-          <Divider />
-          <CardContent sx={{ textAlign: 'left' }}>Ngu</CardContent>
-        </StyledCard>
-      ))}
+            <Divider />
+            <CardContent sx={{ textAlign: 'left' }}>Ngu</CardContent>
+          </StyledCard>
+        ))
+      ) : (
+        <>loading</>
+      )}
     </CardContainer>
   )
 }

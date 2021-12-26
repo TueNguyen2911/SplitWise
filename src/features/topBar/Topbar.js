@@ -25,7 +25,7 @@ import { logout } from '../../redux/slices/userAuthSlice'
 
 const TopbarContainer = () => {
   const dispatch = useDispatch()
-  const userData = useSelector((state) => state.user.data)
+  const userData = useSelector((state) => state.currentUser.data)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
 

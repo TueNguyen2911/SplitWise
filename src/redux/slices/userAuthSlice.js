@@ -1,24 +1,38 @@
 import { createSlice, createAsyncThunk, createEntityAdapter } from '@reduxjs/toolkit'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../../firebase/config'
-const initialState = { refreshToken: null, error: null, status: 'idle' }
+import { signOut } from 'firebase/auth'
+const initialState = { userId: null, error: null, status: 'idle' }
 
 export const login = createAsyncThunk('userAuth/login', async (arg, thunkAPI) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, arg.email, arg.password)
-    return userCredential.user.refreshToken
+    return userCredential.user.uid
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message)
   }
 })
 
-export const authSlice = createSlice({
+export const logout = createAsyncThunk('userAuth/logout', async (arg, thunkAPI) => {
+  try {
+    await signOut(auth)
+    return null
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message)
+  }
+})
+
+export const userAuthSlice = createSlice({
   name: 'userAuth',
   initialState,
   reducers: {
     saveUserAuth: (state, action) => {
-      state.status = 'succeeded'
-      state.refreshToken = action.payload
+      state.userId = action.payload
+      state.error = null
+      state.status = 'idle'
+      if (state.userId) {
+        state.status = 'succeeded'
+      }
     }
   },
   extraReducers: (builder) => {
@@ -28,16 +42,27 @@ export const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.refreshToken = action.payload
+        saveUserAuth(state, action)
       })
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed'
         state.error = action.payload
       })
+
+      .addCase(logout.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+        saveUserAuth(state, action)
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.payload
+      })
   }
 })
-
 // Action creators are generated for each case reducer function
-export const { saveUserAuth } = authSlice.actions
+export const { saveUserAuth } = userAuthSlice.actions
 
-export default authSlice.reducer
+export default userAuthSlice.reducer

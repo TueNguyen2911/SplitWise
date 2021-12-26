@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useFormik } from 'formik'
 import * as yup from 'yup'
 import { Button, TextField } from '@mui/material'
@@ -25,16 +25,6 @@ const Login = () => {
     validationSchema: validationSchema,
     onSubmit: () => {
       dispatch(login({ email: loginForm.values.email, password: loginForm.values.password }))
-      // signInWithEmailAndPassword(auth, loginForm.values.email, loginForm.values.password)
-      //   .then((userCredential) => {
-      //     const user = userCredential.user
-      //     console.log('Singed in user: ', user)
-      //   })
-      //   .catch((error) => {
-      //     const errorCode = error.code
-      //     const errorMessage = error.message
-      //     console.log('An error occured: ', errorCode, errorMessage)
-      //   })
     }
   })
   return (

@@ -16,33 +16,49 @@ import './App.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { auth } from './firebase/config'
 import { saveUserAuth } from './redux/slices/userAuthSlice'
+import { getUserById } from './redux/slices/userSlice'
 function App() {
   const [sideBarWidth, setSideBarWidth] = useState(0)
-
+  const { status } = useSelector((state) => state.auth)
   const dispatch = useDispatch()
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        dispatch(saveUserAuth(user.uid))
+        dispatch(getUserById())
+      } else {
+        dispatch(saveUserAuth(null))
+      }
+    })
+  }, [auth, dispatch])
+
   return (
     <div className="App">
-      <SidebarContainer setSBWidth={setSideBarWidth} />
-      <Router>
-        <MainContent SBWidth={sideBarWidth}>
-          <TopbarContainer />
-          <Route exact path="/">
-            <RouteGuard components={[<GroupCard />]} />
-          </Route>
-          <Route exact path="/expenses">
-            <RouteGuard components={[<ExpenseCard />]} />
-          </Route>
-          <Route exact path="/expense">
-            <RouteGuard components={[<ExpenseTab />]} />
-          </Route>
-          <Route exact path="/form">
-            <RouteGuard components={[<ExpenseForm />]} />
-          </Route>
-          <Route exact path="/login">
-            <RouteGuard path={'/login'} components={[<Login />]} />
-          </Route>
-        </MainContent>
-      </Router>
+      {status === 'succeeded' ? (
+        <>
+          <SidebarContainer setSBWidth={setSideBarWidth} />
+          <Router>
+            <MainContent SBWidth={sideBarWidth}>
+              <TopbarContainer />
+              <Route exact path="/">
+                <RouteGuard components={[<GroupCard />]} />
+              </Route>
+              <Route exact path="/expenses">
+                <RouteGuard path="/expenses" components={[<ExpenseCard />]} />
+              </Route>
+              <Route exact path="/expense">
+                <RouteGuard components={[<ExpenseTab />]} />
+              </Route>
+              <Route exact path="/form">
+                <RouteGuard components={[<ExpenseForm />]} />
+              </Route>
+              <Route exact path="/login">
+                <RouteGuard path={'/login'} components={[<Login />]} />
+              </Route>
+            </MainContent>
+          </Router>
+        </>
+      ) : null}
     </div>
   )
 }

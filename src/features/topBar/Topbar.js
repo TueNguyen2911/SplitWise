@@ -20,8 +20,12 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { signOut } from 'firebase/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../../redux/slices/userAuthSlice'
 
 const TopbarContainer = () => {
+  const dispatch = useDispatch()
+  const userData = useSelector((state) => state.user.data)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
 
@@ -45,13 +49,7 @@ const TopbarContainer = () => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
   const logOut = () => {
-    signOut(auth)
-      .then(() => {
-        console.log('user signed out')
-      })
-      .catch((error) => {
-        console.log('error', error)
-      })
+    dispatch(logout())
   }
   const menuId = 'primary-search-account-menu'
   const renderMenu = (
@@ -71,7 +69,7 @@ const TopbarContainer = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <MenuItem onClick={handleMenuClose}>{userData.userName}</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       <Divider />
       <MenuItem onClick={handleMenuClose}>Close</MenuItem>
@@ -121,7 +119,7 @@ const TopbarContainer = () => {
         >
           <AccountCircle />
         </IconButton>
-        <p>Profile</p>
+        <p>{userData.name}</p>
       </MenuItem>
     </Menu>
   )
@@ -154,10 +152,7 @@ const TopbarContainer = () => {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar
-                  alt="Remy Sharp"
-                  src="https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Qiyana_0.jpg"
-                />
+                <Avatar alt="Remy Sharp" src={userData.avatar} />
               </IconButton>
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

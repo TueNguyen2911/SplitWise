@@ -24,7 +24,6 @@ import ExpenseTab from '../expenseTab/ExpenseTab'
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
   const [isBillForm, setIsBillForm] = useState(false)
-  let averagePrice = 0
 
   const [users] = useState([
     { name: 'Tue', avatar: 'https://images.sharp.com/doctors/Nguyen_Tue_56474_2012.jpg' },
@@ -41,40 +40,51 @@ const ExpenseForm = () => {
   ])
   const handleOwnedChange = (e, index) => {
     const value = Number(e.target.value)
-    if (value < 0 || value > formik.values.total || !formik.values.members[index].fixed) {
+    const newMembers = [...formik.values.members]
+    newMembers[index].owned = value
+    let fixedTotal = newMembers.reduce((fixedOwned, current, currentIndex) => {
+      if (current.fixed) {
+        return (fixedOwned += current.owned)
+      }
+      return fixedOwned
+    }, 0)
+    if (
+      value < 0 ||
+      value > formik.values.total ||
+      fixedTotal > formik.values.total ||
+      !formik.values.members[index].fixed
+    ) {
       console.log('returned')
       return
     }
-    const newMembers = [...formik.values.members]
-    newMembers[index].owned = value
+
     let fixedMember = 0
-    const fixedTotal = newMembers.reduce((fixedOwned, current, currentIndex) => {
+    fixedTotal = newMembers.reduce((fixedOwned, current, currentIndex) => {
       if (current.fixed) {
         ++fixedMember
         return (fixedOwned += current.owned)
       }
       return fixedOwned
     }, 0)
-
-    console.log(fixedTotal)
     const newAverage =
       (formik.values.total - fixedTotal) / (formik.values.members.length - fixedMember)
     console.log(newAverage)
     newMembers.forEach((elem, i) => {
-      if (!elem.fixed) {
+      if (!elem.fixed && i != index) {
         elem.owned = newAverage
       }
-      if (i == index) {
-        elem.owned = value
-      }
     })
-    console.log(newMembers)
     formik.setValues({
       ...formik.values,
       members: newMembers
     })
   }
   const handleFixedCheck = (e, index) => {
+    const value = Boolean(e.target.value)
+    if (value) {
+      formik.handleChange(e)
+      return
+    }
     const fixedCnt = formik.values.members.reduce((cnt, current) => {
       if (current.fixed) {
         return ++cnt
@@ -98,6 +108,7 @@ const ExpenseForm = () => {
     billPrice: [0],
     total: 0,
     billImg: null,
+    billImgTotal: 0,
     members: [
       {
         uid: '123',
@@ -132,7 +143,17 @@ const ExpenseForm = () => {
   }
   const setImgValue = (e) => {
     console.log(e.target.files[0])
-    formik.setValues({ ...formik.values, billImg: e.target.files[0] })
+    const newMembers = [...formik.values.members]
+    const average = formik.values.billImgTotal / newMembers.length
+    newMembers.map((elem, index) => {
+      elem.owned = average
+    })
+    formik.setValues({
+      ...formik.values,
+      billImg: e.target.files[0],
+      members: newMembers,
+      total: formik.values.billImgTotal
+    })
   }
   const handleDescChange = (e, index) => {
     const billDescArr = [...formik.values.billDesc]
@@ -158,7 +179,6 @@ const ExpenseForm = () => {
     if (newTotal < fixedTotal) {
       return
     } else {
-      console.log('billPriceArr', billPriceArr)
       const newMembers = [...formik.values.members]
       const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedMember)
       console.log('new Avg', newAverage)
@@ -208,30 +228,62 @@ const ExpenseForm = () => {
     })
   }
   const toggleBillForm = () => {
-    formik.setValues(initialValues)
+    let newMembers = [...formik.values.members]
+    let newTotal = 0
+    if (isBillForm) {
+      newMembers.map((elem, index) => {
+        elem.owned = 0
+        elem.fixed = false
+      })
+    } else {
+      newTotal = formik.values.billPrice.reduce((prev, curr) => prev + curr)
+      const average = newTotal / newMembers.length
+      newMembers.map((elem, index) => {
+        elem.owned = average
+        elem.fixed = false
+      })
+    }
+    formik.setValues({ ...formik.values, total: newTotal, members: newMembers })
     setIsBillForm(!isBillForm)
   }
   const removeBillImg = () => {
     uploadBillImgRef.current.value = null
     formik.setValues({ ...formik.values, billImg: null, total: 0 })
   }
-  // useEffect(() => {
-  //   console.log(formik.values)
-  //   const locTotal = formik.values.billPrice.reduce((prev, curr) => prev + curr)
-  //   console.log(locTotal)
-  //   const notFixedNum = formik.values.members.reduce((count, curr) => {
-  //     return !curr.fixed ? ++count : count
-  //   }, 0)
-  //   averagePrice = Number((locTotal / notFixedNum).toFixed(2))
-  //   const newMember = formik.values.members.map((elem, index) => {
-  //     if (!elem.fixed) {
-  //       elem.owned = averagePrice
-  //     }
-  //     return elem
-  //   })
-  //   console.log(newMember)
-  //   formik.setValues({ ...formik.values, members: newMember, total: locTotal })
-  // }, [formik.values.billPrice])
+  const handleBillImgTotalChange = (e) => {
+    const value = Number(e.target.value)
+    const newTotal = value
+    let fixedMember = 0
+    const fixedTotal = formik.values.members.reduce((fixedOwned, current) => {
+      if (current.fixed) {
+        ++fixedMember
+        return (fixedOwned += current.owned)
+      }
+      return fixedOwned
+    }, 0)
+    if (newTotal < fixedTotal) {
+      return
+    } else {
+      const newMembers = [...formik.values.members]
+      const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedMember)
+      newMembers.forEach((elem, index) => {
+        if (!elem.fixed) {
+          elem.owned = newAverage
+        }
+      })
+      console.log(newMembers)
+      formik.setValues({
+        ...formik.values,
+        members: newMembers,
+        total: newTotal
+      })
+    }
+  }
+  useEffect(() => {
+    if (formik.values.billImg) {
+      formik.setValues({ ...formik.values, billImgTotal: formik.values.total })
+    }
+  }, [formik.values.total])
   return (
     <>
       <Formik onSubmit={formik.handleSubmit} style={{ textAlign: 'left', margin: '10px 20px' }}>
@@ -273,7 +325,7 @@ const ExpenseForm = () => {
                 name="total"
                 id="total"
                 type="number"
-                onChange={formik.handleChange}
+                onChange={(e) => handleBillImgTotalChange(e)}
                 value={formik.values.total}
               />
             </>
@@ -355,51 +407,52 @@ const ExpenseForm = () => {
             </TableContainer>
           ) : null}
           <br /> <br />
-          <TableContainer id="split-table">
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell>Owned</TableCell>
-                  <TableCell>Notes</TableCell>
-                </TableRow>
-              </TableHead>
+          {isBillForm || formik.values.billImg ? (
+            <TableContainer id="split-table">
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell></TableCell>
+                    <TableCell>Owned</TableCell>
+                    <TableCell>Notes</TableCell>
+                  </TableRow>
+                </TableHead>
 
-              <TableBody>
-                <FieldArray name="members">
-                  {({ push, remove }) => (
-                    <>
-                      {formik.values.members.map((elem, index) => {
-                        const name = `members[${index}].owned`
-                        const name2 = `members[${index}].fixed`
-                        return (
-                          <TableRow key={index}>
-                            <TableCell>
-                              <TextField
-                                type="number"
-                                margin="normal"
-                                variant="outlined"
-                                label="owned"
-                                name={name}
-                                value={elem.owned}
-                                onChange={(e) => handleOwnedChange(e, index)}
-                                required
-                              />
-                              <FormControlLabel
-                                label="Fixed"
-                                name={name2}
-                                value={elem.fixed}
-                                control={<Checkbox checked={elem.fixed} />}
-                                onChange={(e) => handleFixedCheck(e, index)}
-                              />
-                            </TableCell>
-                          </TableRow>
-                        )
-                      })}
-                    </>
-                  )}
-                </FieldArray>
-                {/* {formik.values.members.map((elem, index) => (
+                <TableBody>
+                  <FieldArray name="members">
+                    {({ push, remove }) => (
+                      <>
+                        {formik.values.members.map((elem, index) => {
+                          const name = `members[${index}].owned`
+                          const name2 = `members[${index}].fixed`
+                          return (
+                            <TableRow key={index}>
+                              <TableCell>
+                                <TextField
+                                  type="number"
+                                  margin="normal"
+                                  variant="outlined"
+                                  label="owned"
+                                  name={name}
+                                  value={elem.owned}
+                                  onChange={(e) => handleOwnedChange(e, index)}
+                                  required
+                                />
+                                <FormControlLabel
+                                  label="Fixed"
+                                  name={name2}
+                                  value={elem.fixed}
+                                  control={<Checkbox checked={elem.fixed} />}
+                                  onChange={(e) => handleFixedCheck(e, index)}
+                                />
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </>
+                    )}
+                  </FieldArray>
+                  {/* {formik.values.members.map((elem, index) => (
                   <TableRow>
                     <TableCell>
                       <Avatar />
@@ -412,9 +465,10 @@ const ExpenseForm = () => {
                     </TableCell>
                   </TableRow>
                 ))} */}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : null}
         </Form>
       </Formik>
 

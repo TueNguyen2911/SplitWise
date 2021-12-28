@@ -9,6 +9,7 @@ import { useState, useEffect, useRef } from 'react'
 import ExpenseCard from './features/expenseCard/ExpenseCard'
 import ExpenseTab from './features/expenseTab/ExpenseTab'
 import ExpenseForm from './features/expenseForm/ExpenseForm'
+import ExpenseForm2 from './features/expenseForm2/ExpenseForm2'
 import Login from './features/login/Login'
 import RouteGuard from './features/routeGuard/RouteGuard'
 import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
@@ -60,6 +61,9 @@ function App() {
               </Route>
               <Route exact path="/login">
                 <RouteGuard path={'/login'} components={[<Login />]} />
+              </Route>
+              <Route exact path="/expense2">
+                <RouteGuard components={[<ExpenseForm2 />]} />
               </Route>
             </MainContent>
           </Router>

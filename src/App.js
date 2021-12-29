@@ -44,9 +44,13 @@ function App() {
       {status === 'succeeded' ? (
         <>
           <Router>
-            <SidebarContainer setSBWidth={setSideBarWidth} />
+            <RouteGuard
+              path="/expenses"
+              components={[<SidebarContainer setSBWidth={setSideBarWidth} />]}
+            />
             <MainContent SBWidth={sideBarWidth}>
-              <TopbarContainer />
+              <RouteGuard path="/expenses" components={[<TopbarContainer />]} />
+
               <Route exact path="/">
                 <RouteGuard components={[<GroupCard />]} />
               </Route>

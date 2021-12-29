@@ -38,50 +38,9 @@ const ExpenseForm = () => {
         'https://static.independent.co.uk/2020/10/30/08/newFile-2.jpg?width=640&auto=webp&quality=75'
     }
   ])
-  const handleOwnedChange = (e, index) => {
-    const value = Number(e.target.value)
-    const newMembers = [...formik.values.members]
-    newMembers[index].owned = value
-    let fixedTotal = newMembers.reduce((fixedOwned, current, currentIndex) => {
-      if (current.fixed) {
-        return (fixedOwned += current.owned)
-      }
-      return fixedOwned
-    }, 0)
-    if (
-      value < 0 ||
-      value > formik.values.total ||
-      fixedTotal > formik.values.total ||
-      !formik.values.members[index].fixed
-    ) {
-      console.log('returned')
-      return
-    }
 
-    let fixedMember = 0
-    fixedTotal = newMembers.reduce((fixedOwned, current, currentIndex) => {
-      if (current.fixed) {
-        ++fixedMember
-        return (fixedOwned += current.owned)
-      }
-      return fixedOwned
-    }, 0)
-    const newAverage =
-      (formik.values.total - fixedTotal) / (formik.values.members.length - fixedMember)
-    console.log(newAverage)
-    newMembers.forEach((elem, i) => {
-      if (!elem.fixed && i != index) {
-        elem.owned = newAverage
-      }
-    })
-    formik.setValues({
-      ...formik.values,
-      members: newMembers
-    })
-  }
   const handleFixedCheck = (e, index) => {
-    const value = Boolean(e.target.value)
-    if (value) {
+    if (formik.values.members[index].fixed) {
       formik.handleChange(e)
       return
     }
@@ -160,34 +119,73 @@ const ExpenseForm = () => {
     billDescArr[index] = e.target.value
     formik.setValues({ ...formik.values, billDesc: billDescArr })
   }
-  const handlePriceChange = (e, index) => {
-    const value = Number(e.target.value)
-    const billPriceArr = [...formik.values.billPrice]
-    billPriceArr[index] = value
-
-    const newTotal = billPriceArr.reduce((prev, curr) => prev + curr)
-    console.log(newTotal)
-    let fixedMember = 0
-    const fixedTotal = formik.values.members.reduce((fixedOwned, current) => {
+  const getFixedTotal = (membersArr) => {
+    return membersArr.reduce((fixedOwned, current) => {
       if (current.fixed) {
-        ++fixedMember
         return (fixedOwned += current.owned)
       }
       return fixedOwned
     }, 0)
+  }
+  const getFixedCount = (membersArr) => {
+    return membersArr.reduce((count, current) => {
+      if (current.fixed) {
+        return ++count
+      }
+      return count
+    }, 0)
+  }
+  const handleOwnedChange = (e, index) => {
+    const value = Number(e.target.value)
+    const newMembers = [...formik.values.members]
+    newMembers[index].owned = value
+    const fixedTotal = getFixedTotal(newMembers)
+    if (
+      value < 0 ||
+      value > formik.values.total ||
+      fixedTotal > formik.values.total ||
+      !formik.values.members[index].fixed
+    ) {
+      console.log('returned')
+      return
+    }
+    const fixedCount = getFixedCount(newMembers)
+    const newAverage =
+      (formik.values.total - fixedTotal) / (formik.values.members.length - fixedCount)
+    newMembers.forEach((elem, i) => {
+      if (!elem.fixed && i != index) {
+        elem.owned = newAverage
+      }
+    })
+    formik.setValues({
+      ...formik.values,
+      members: newMembers
+    })
+  }
+  const getTotal = (billPriceArr) => {
+    return billPriceArr.reduce((prev, curr) => prev + curr)
+  }
+  const handlePriceChange = (e, index) => {
+    const value = Number(e.target.value)
+
+    const billPriceArr = [...formik.values.billPrice]
+    billPriceArr[index] = value
+
+    const newMembers = [...formik.values.members]
+
+    const newTotal = getTotal(billPriceArr)
+    const fixedCount = getFixedCount(newMembers)
+    const fixedTotal = getFixedTotal(newMembers)
     console.log(newTotal, fixedTotal)
     if (newTotal < fixedTotal) {
       return
     } else {
-      const newMembers = [...formik.values.members]
-      const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedMember)
-      console.log('new Avg', newAverage)
+      const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedCount)
       newMembers.forEach((elem, index) => {
         if (!elem.fixed) {
           elem.owned = newAverage
         }
       })
-      console.log(newMembers)
       formik.setValues({
         ...formik.values,
         members: newMembers,
@@ -210,13 +208,8 @@ const ExpenseForm = () => {
       console.log(billPriceArr.splice(index, 1))
       console.log(billPriceArr)
     }
-    const newTotal = billPriceArr.reduce((prev, curr) => prev + curr)
-    const fixedTotal = formik.values.members.reduce((fixedOwned, current) => {
-      if (current.fixed) {
-        return (fixedOwned += current.owned)
-      }
-      return fixedOwned
-    }, 0)
+    const newTotal = getTotal(billPriceArr)
+    const fixedTotal = getFixedTotal(formik.values.members)
     if (newTotal < fixedTotal) {
       return
     }
@@ -227,8 +220,31 @@ const ExpenseForm = () => {
       total: newTotal
     })
   }
+  const handleBillImgTotalChange = (e) => {
+    const value = Number(e.target.value)
+    const newTotal = value
+    const newMembers = [...formik.values.members]
+
+    const fixedCount = getFixedCount(newMembers)
+    const fixedTotal = getFixedTotal(formik.values.members)
+    if (newTotal < fixedTotal) {
+      return
+    } else {
+      const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedCount)
+      newMembers.forEach((elem, index) => {
+        if (!elem.fixed) {
+          elem.owned = newAverage
+        }
+      })
+      formik.setValues({
+        ...formik.values,
+        members: newMembers,
+        total: newTotal
+      })
+    }
+  }
   const toggleBillForm = () => {
-    let newMembers = [...formik.values.members]
+    const newMembers = [...formik.values.members]
     let newTotal = 0
     if (isBillForm) {
       newMembers.map((elem, index) => {
@@ -236,7 +252,7 @@ const ExpenseForm = () => {
         elem.fixed = false
       })
     } else {
-      newTotal = formik.values.billPrice.reduce((prev, curr) => prev + curr)
+      newTotal = getTotal(formik.values.billPrice)
       const average = newTotal / newMembers.length
       newMembers.map((elem, index) => {
         elem.owned = average
@@ -250,35 +266,7 @@ const ExpenseForm = () => {
     uploadBillImgRef.current.value = null
     formik.setValues({ ...formik.values, billImg: null, total: 0 })
   }
-  const handleBillImgTotalChange = (e) => {
-    const value = Number(e.target.value)
-    const newTotal = value
-    let fixedMember = 0
-    const fixedTotal = formik.values.members.reduce((fixedOwned, current) => {
-      if (current.fixed) {
-        ++fixedMember
-        return (fixedOwned += current.owned)
-      }
-      return fixedOwned
-    }, 0)
-    if (newTotal < fixedTotal) {
-      return
-    } else {
-      const newMembers = [...formik.values.members]
-      const newAverage = (newTotal - fixedTotal) / (newMembers.length - fixedMember)
-      newMembers.forEach((elem, index) => {
-        if (!elem.fixed) {
-          elem.owned = newAverage
-        }
-      })
-      console.log(newMembers)
-      formik.setValues({
-        ...formik.values,
-        members: newMembers,
-        total: newTotal
-      })
-    }
-  }
+
   useEffect(() => {
     if (formik.values.billImg) {
       formik.setValues({ ...formik.values, billImgTotal: formik.values.total })
@@ -452,19 +440,6 @@ const ExpenseForm = () => {
                       </>
                     )}
                   </FieldArray>
-                  {/* {formik.values.members.map((elem, index) => (
-                  <TableRow>
-                    <TableCell>
-                      <Avatar />
-                    </TableCell>
-                    <TableCell>
-                      <TextField type="number" name={`members.${index}.owned`} value={elem.owned} />
-                    </TableCell>
-                    <TableCell>
-                      <TextField />
-                    </TableCell>
-                  </TableRow>
-                ))} */}
                 </TableBody>
               </Table>
             </TableContainer>

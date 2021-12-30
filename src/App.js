@@ -72,7 +72,7 @@ function App() {
               <Route exact path="/expense2">
                 <RouteGuard components={[<ExpenseForm2 />]} />
               </Route>
-              <Route path="/group/:groupId/expense/:expenseId">
+              <Route path="/group/:groupId/expense/:expenseFormId">
                 <ExpenseForm />
               </Route>
             </MainContent>

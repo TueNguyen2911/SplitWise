@@ -23,10 +23,27 @@ import ExpenseTab from '../expenseTab/ExpenseTab'
 import BillImgForm from './BillImgForm'
 import BillForm from './BillForm'
 import SplitForm from './SplitForm'
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
+import { useDispatch } from 'react-redux'
+import { getExpenseFormById } from '../../redux/slices/expenseFormSlice'
+import { useSelector } from 'react-redux'
+import { getUsersByIds } from '../../redux/slices/usersSlice'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
   const [isBillForm, setIsBillForm] = useState(false)
+  const { expenseFormId } = useParams()
+  const expenseForm = useSelector((state) => state.expenseForm)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    dispatch(getExpenseFormById(expenseFormId))
+  }, [dispatch])
+  useEffect(() => {
+    if (expenseForm.status === 'succeeded') {
+      const memberIds = expenseForm.data.members.map((elem) => elem.id)
+      dispatch(getUsersByIds(memberIds))
+    }
+  }, [expenseForm.status])
   //setting up form
   const validationSchema = yup.object().shape({
     billDesc: yup.array().of(yup.string()),

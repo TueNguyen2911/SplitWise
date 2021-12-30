@@ -53,7 +53,10 @@ const ExpenseCard = () => {
       <CardContainer>
         {expenses ? (
           expenses.map((elem, index) => (
-            <StyledCard key={index} onClick={() => history.push(`${url}/expense/${elem.id}`)}>
+            <StyledCard
+              key={index}
+              onClick={() => history.push(`${url}/expense/${elem.expenseFormId}`)}
+            >
               <Box>
                 <CardMedia
                   component="img"
@@ -73,7 +76,7 @@ const ExpenseCard = () => {
         )}
       </CardContainer>
 
-      <Route exact path={`${path}/expense/:expenseId`}>
+      <Route exact path={`${path}/expense/:expenseFormId`}>
         <ExpenseTab />
       </Route>
     </div>

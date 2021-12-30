@@ -37,22 +37,22 @@ const ExpenseCard = () => {
   const { groupId } = useParams()
   const { path, url } = useRouteMatch()
   const groups = useSelector((state) => state.groups.data)
-  const [expense, setExpense] = useState([])
+  const [expenses, setExpenses] = useState([])
   useEffect(() => {
     if (groupId && groups.length > 0) {
-      const getExpense = groups.map((elem, idx) => {
+      const locExpenses = groups.map((elem, idx) => {
         if (elem.id === groupId) {
           return elem.expenses
         }
       })
-      setExpense(getExpense[0])
+      setExpenses(locExpenses[0])
     }
   }, [groups, groupId])
   return (
     <div className="ExpenseCard">
       <CardContainer>
-        {expense ? (
-          expense.map((elem, index) => (
+        {expenses ? (
+          expenses.map((elem, index) => (
             <StyledCard key={index} onClick={() => history.push(`${url}/expense/${elem.id}`)}>
               <Box>
                 <CardMedia

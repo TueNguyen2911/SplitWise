@@ -8,10 +8,11 @@ import {
   TableCell,
   TextField,
   FormControlLabel,
-  Checkbox
+  Checkbox,
+  Avatar
 } from '@mui/material'
 import { Formik, Form, useFormik, FieldArray } from 'formik'
-const SplitForm = ({ isBillForm, formik, handleFixedCheck, handleOwnedChange }) => {
+const SplitForm = ({ users, isBillForm, formik, handleFixedCheck, handleOwnedChange }) => {
   if (isBillForm || formik.values.billImg) {
     return (
       <div className="split-form">
@@ -30,27 +31,43 @@ const SplitForm = ({ isBillForm, formik, handleFixedCheck, handleOwnedChange }) 
                 {({ push, remove }) => (
                   <>
                     {formik.values.members.map((elem, index) => {
-                      const name = `members[${index}].owned`
-                      const name2 = `members[${index}].fixed`
+                      const ownedName = `members[${index}].owned`
+                      const fixedName = `members[${index}].fixed`
+                      const noteName = `members[${index}].note`
                       return (
                         <TableRow key={index}>
+                          <TableCell>
+                            <Avatar alt={users[index].userName} src={users[index].avatar} />
+                            {users[index].userName}
+                          </TableCell>
                           <TableCell>
                             <TextField
                               type="number"
                               margin="normal"
                               variant="outlined"
                               label="owned"
-                              name={name}
+                              name={ownedName}
                               value={elem.owned}
                               onChange={(e) => handleOwnedChange(e, index)}
-                              required
                             />
                             <FormControlLabel
                               label="Fixed"
-                              name={name2}
+                              name={fixedName}
                               value={elem.fixed}
                               control={<Checkbox checked={elem.fixed} />}
                               onChange={(e) => handleFixedCheck(e, index)}
+                            />
+                          </TableCell>
+
+                          <TableCell>
+                            <TextField
+                              type="text"
+                              margin="normal"
+                              variant="outlined"
+                              label="Note"
+                              name={noteName}
+                              value={elem.note}
+                              onChange={formik.handleChange}
                             />
                           </TableCell>
                         </TableRow>

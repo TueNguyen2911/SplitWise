@@ -38,7 +38,7 @@ export default function GroupCard() {
     <CardContainer>
       {status === 'succeeded' ? (
         data.map((elem, index) => (
-          <StyledCard onClick={() => history.push(`/expenses?index=${index}`)}>
+          <StyledCard onClick={() => history.push(`/group/${elem.id}`)}>
             <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
               <CardMedia
                 component="img"

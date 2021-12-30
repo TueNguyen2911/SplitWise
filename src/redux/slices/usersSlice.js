@@ -7,14 +7,12 @@ const initialState = { data: [{}], status: 'idle', error: null }
  */
 export const getUsersByIds = createAsyncThunk('users/getUsersByIds', async (userId, thunkAPI) => {
   try {
-    console.log(userId)
     let userData = []
     const q = query(collection(db, 'Users'), where('id', 'in', userId))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
       userData.push(Object(doc.data()))
     })
-    console.log(userData)
     return userData
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message)

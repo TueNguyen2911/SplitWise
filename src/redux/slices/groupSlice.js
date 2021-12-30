@@ -12,16 +12,14 @@ export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, 
     querySnapshot.forEach((doc) => {
       groupData.push(Object(doc.data()))
     })
-
+    //fetching members based on memberIds to add to state
     for (const data of groupData) {
-      const userQuery = query(collection(db, 'Users'), where('id', 'in', data.memberId))
+      const userQuery = query(collection(db, 'Users'), where('id', 'in', data.memberIds))
       const querySnapshot = await getDocs(userQuery)
       querySnapshot.forEach((doc) => {
         data.members.push(doc.data())
-        console.log(doc.data())
       })
     }
-    console.log(groupData)
     return groupData
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message)

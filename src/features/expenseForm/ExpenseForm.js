@@ -23,52 +23,81 @@ import ExpenseTab from '../expenseTab/ExpenseTab'
 import BillImgForm from './BillImgForm'
 import BillForm from './BillForm'
 import SplitForm from './SplitForm'
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min'
+import { useDispatch } from 'react-redux'
+import { getExpenseFormById } from '../../redux/slices/expenseFormSlice'
+import { useSelector } from 'react-redux'
+import { getUsersByIds } from '../../redux/slices/usersSlice'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
   const [isBillForm, setIsBillForm] = useState(false)
-  //setting up form
+  const { expenseFormId } = useParams()
+  const expenseForm = useSelector((state) => state.expenseForm)
+  const users = useSelector((state) => state.users)
+  const dispatch = useDispatch()
+  console.log(expenseForm.data)
+
   const validationSchema = yup.object().shape({
     billDesc: yup.array().of(yup.string()),
     billPrice: yup.array().of(yup.number()),
     total: yup.number(),
     billImg: yup.object()
   })
-  const initialValues = {
+  const intitalValues = {
+    id: '3FVeiEeThLY',
     name: 'Pizza',
     billDesc: [''],
     billPrice: [0],
     total: 0,
-    billImg: null,
+    billImg: '',
     billImgTotal: 0,
     members: [
       {
-        uid: '123',
+        id: 'rFRlyHsEHkYqTVUR1W8qnLrUcdA2',
         owned: 0,
-        note: 'Haha 123',
+        note: '',
         fixed: false
       },
       {
-        uid: '1231',
+        id: 'sYRNy0yUILXEk6iaDO4x0sCJVBm1',
         owned: 0,
-        note: 'Haha 123',
+        note: '',
         fixed: false
       },
       {
-        uid: '1223',
+        id: 'QFL6TuMHh7cqviA0S1Npr1QjC4K2',
         owned: 0,
-        note: 'Haha 123',
+        note: '',
         fixed: false
       }
     ]
   }
   const formik = useFormik({
-    initialValues: initialValues,
+    initialValues: intitalValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2))
     }
   })
+  useEffect(() => {
+    dispatch(getExpenseFormById(expenseFormId))
+  }, [dispatch])
+
+  useEffect(() => {
+    if (expenseForm.status === 'succeeded') {
+      const memberIds = expenseForm.data.members.map((elem) => elem.id)
+      dispatch(getUsersByIds(memberIds))
+      const expenseFormData = JSON.parse(JSON.stringify(expenseForm.data))
+      expenseFormData.billImg = null
+      formik.setValues(expenseFormData)
+    }
+  }, [expenseForm.status])
+  //setting up form
+
+  useEffect(() => {
+    console.log(formik.values)
+  }, [formik.values])
   //helper functions
   const handleFixedCheck = (e, index) => {
     if (formik.values.members[index].fixed) {
@@ -163,7 +192,6 @@ const ExpenseForm = () => {
       fixedTotal > formik.values.total ||
       !formik.values.members[index].fixed
     ) {
-      console.log('returned')
       return
     }
     const fixedCount = getFixedCount(newMembers)
@@ -218,21 +246,27 @@ const ExpenseForm = () => {
       billDescArr[currLength] = ''
       billPriceArr[currLength] = 0
     } else if (operation === 'remove' && currLength > 1) {
-      console.log(billPriceArr)
       billDescArr.splice(index, 1)
-      console.log(billPriceArr.splice(index, 1))
-      console.log(billPriceArr)
     }
+    const newMembers = [...formik.values.members]
     const newTotal = getTotal(billPriceArr)
+    const fixedCount = getFixedCount(newMembers)
     const fixedTotal = getFixedTotal(formik.values.members)
     if (newTotal < fixedTotal) {
       return
     }
+    const restAverage = (newTotal - fixedTotal) / (newMembers.length - fixedCount)
+    newMembers.forEach((elem, index) => {
+      if (!elem.fixed) {
+        elem.owned = restAverage
+      }
+    })
     formik.setValues({
       ...formik.values,
       billPrice: billPriceArr,
       billDesc: billDescArr,
-      total: newTotal
+      total: newTotal,
+      members: newMembers
     })
   }
   const handleBillImgTotalChange = (e) => {
@@ -265,6 +299,9 @@ const ExpenseForm = () => {
       formik.setValues({ ...formik.values, billImgTotal: formik.values.total })
     }
   }, [formik.values.total])
+  if (!formik.values) {
+    return null
+  }
   return (
     <>
       <Formik
@@ -273,9 +310,6 @@ const ExpenseForm = () => {
         style={{ textAlign: 'left', margin: '10px 20px' }}
       >
         <Form>
-          <Button sx={{ float: 'right' }} variant="outlined" color="error">
-            Delete
-          </Button>
           <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
           <Tooltip
             title={isBillForm ? 'Only the bill image or the bill form' : 'Upload a receipt image'}
@@ -333,6 +367,7 @@ const ExpenseForm = () => {
           />
           <br /> <br />
           <SplitForm
+            users={users.data}
             isBillForm={isBillForm}
             formik={formik}
             handleFixedCheck={handleFixedCheck}

@@ -18,7 +18,6 @@ const ExpenseTab = () => {
     setValue(newValue)
   }
   const addExpense = () => {
-    console.log('yo')
     setExpenses([...expenses, `Expense #${expenses.length}`])
   }
   const StyledTab = styled(Tab)({

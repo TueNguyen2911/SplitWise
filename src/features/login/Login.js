@@ -10,8 +10,7 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { login } from '../../redux/slices/userAuthSlice'
 
 const Login = () => {
-  const error = useSelector((state) => state.auth.error)
-  const status = useSelector((state) => state.auth.status)
+  const userAuth = useSelector((state) => state.userAuth)
   const dispatch = useDispatch()
   const validationSchema = yup.object().shape({
     email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -57,7 +56,7 @@ const Login = () => {
         <Button color="primary" variant="contained" fullWidth type="submit">
           Submit
         </Button>
-        <div>{status === 'failed' ? error : null}</div>
+        <div>{userAuth.status === 'failed' ? userAuth.error : null}</div>
       </form>
     </div>
   )

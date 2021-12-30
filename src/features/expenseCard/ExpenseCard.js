@@ -1,13 +1,15 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import CardMedia from '@mui/material/CardMedia'
 import Divider from '@mui/material/Divider'
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useHistory, useLocation, useParams, useRouteMatch, Route, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import queryString from 'query-string'
+import ExpenseForm from '../expenseForm/ExpenseForm'
+import ExpenseTab from '../expenseTab/ExpenseTab'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -18,7 +20,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
   },
   transition: 'width 0.2s',
   '&:hover': {
-    opacity: '0.5'
+    opacity: '0.8'
   }
 }))
 
@@ -32,27 +34,49 @@ const CardContainer = styled('div')({
 const ExpenseCard = () => {
   const history = useHistory()
   const { search } = useLocation()
-  const index = Number(queryString.parse(search).index)
-  const expense = useSelector((state) => state.groups.data[index].expense)
+  const { groupId } = useParams()
+  const { path, url } = useRouteMatch()
+  const groups = useSelector((state) => state.groups.data)
+  const [expense, setExpense] = useState([])
+  useEffect(() => {
+    if (groupId && groups.length > 0) {
+      const getExpense = groups.map((elem, idx) => {
+        if (elem.id === groupId) {
+          return elem.expenses
+        }
+      })
+      setExpense(getExpense[0])
+    }
+  }, [groups, groupId])
   return (
-    <CardContainer onClick={() => history.push('expense')}>
-      {expense.map((elem) => (
-        <StyledCard>
-          <Box>
-            <CardMedia
-              component="img"
-              sx={{ objectFit: 'cover' }}
-              image={elem.image}
-              alt="Live from space album cover"
-            />
-          </Box>
-          <Divider />
-          <CardContent sx={{ textAlign: 'left' }}>
-            {elem.name} <br /> {elem.date}
-          </CardContent>
-        </StyledCard>
-      ))}
-    </CardContainer>
+    <div className="ExpenseCard">
+      <CardContainer>
+        {expense ? (
+          expense.map((elem, index) => (
+            <StyledCard key={index} onClick={() => history.push(`${url}/expense/${elem.id}`)}>
+              <Box>
+                <CardMedia
+                  component="img"
+                  sx={{ objectFit: 'cover' }}
+                  image={elem.image}
+                  alt="Expense Img"
+                />
+              </Box>
+              <Divider />
+              <CardContent sx={{ textAlign: 'left' }}>
+                {elem.name} <br /> {elem.date}
+              </CardContent>
+            </StyledCard>
+          ))
+        ) : (
+          <>loading</>
+        )}
+      </CardContainer>
+
+      <Route exact path={`${path}/expense/:expenseId`}>
+        <ExpenseTab />
+      </Route>
+    </div>
   )
 }
 

@@ -35,42 +35,33 @@ function App() {
       }
     })
   }, [auth, dispatch])
+
   useEffect(() => {
     if (userAuth.status === 'succeeded' && userAuth.userId) {
       dispatch(getUserById())
     }
   }, [userAuth.status])
+
   useEffect(() => {
     if (currentUser.status === 'succeeded') {
       dispatch(getAllGroups())
     }
   }, [currentUser.status])
-  useEffect(() => {
-    if (groups.status === 'succeeded') {
-      console.log(groups.memberId)
-      dispatch(getUsersByIds(groups.memberId))
-    }
-  }, [groups.status])
+
   return (
     <div className="App">
       {userAuth.status === 'succeeded' ? (
         <>
           <Router>
-            <RouteGuard
-              path="/expenses"
-              components={[<SidebarContainer setSBWidth={setSideBarWidth} />]}
-            />
+            <RouteGuard components={[<SidebarContainer setSBWidth={setSideBarWidth} />]} />
             <MainContent SBWidth={sideBarWidth}>
-              <RouteGuard path="/expenses" components={[<TopbarContainer />]} />
+              <RouteGuard components={[<TopbarContainer />]} />
 
               <Route exact path="/">
                 <RouteGuard components={[<GroupCard />]} />
               </Route>
-              <Route exact path="/expenses">
-                <RouteGuard path="/expenses" components={[<ExpenseCard />]} />
-              </Route>
-              <Route exact path="/expense">
-                <RouteGuard components={[<ExpenseTab />]} />
+              <Route exact path="/group/:groupId">
+                <RouteGuard components={[<ExpenseCard />]} />
               </Route>
               <Route exact path="/form">
                 <RouteGuard components={[<ExpenseForm />]} />
@@ -81,14 +72,19 @@ function App() {
               <Route exact path="/expense2">
                 <RouteGuard components={[<ExpenseForm2 />]} />
               </Route>
+              <Route path="/group/:groupId/expense/:expenseId">
+                <ExpenseForm />
+              </Route>
             </MainContent>
           </Router>
         </>
-      ) : (
+      ) : userAuth.status === 'failed' ? (
         <>
-          <Login />
+          <MainContent SBWidth={sideBarWidth}>
+            <Login />
+          </MainContent>
         </>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -20,6 +20,9 @@ import {
 } from '@mui/material'
 import Preview from './Preview'
 import ExpenseTab from '../expenseTab/ExpenseTab'
+import BillImgForm from './BillImgForm'
+import BillForm from './BillForm'
+import SplitForm from './SplitForm'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
@@ -300,18 +303,7 @@ const ExpenseForm = () => {
             </span>
           </Tooltip>
           <br /> <br />
-          {formik.values.billImg ? (
-            <>
-              <label>Total: </label>
-              <TextField
-                name="total"
-                id="total"
-                type="number"
-                onChange={(e) => handleBillImgTotalChange(e)}
-                value={formik.values.total}
-              />
-            </>
-          ) : null}
+          <BillImgForm handleBillImgTotalChange={handleBillImgTotalChange} formik={formik} />
           <br /> <br />
           <Tooltip
             title={
@@ -332,125 +324,22 @@ const ExpenseForm = () => {
               </Button>
             </span>
           </Tooltip>
-          {isBillForm ? (
-            <TableContainer>
-              <Table className="billForm" sx={{ maxWidth: '60vw' }}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Description</TableCell>
-                    <TableCell>Price</TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  {formik.values.billDesc.map((elem, index) => (
-                    <TableRow>
-                      <TableCell>
-                        <TextField
-                          value={formik.values.billDesc[index]}
-                          multiline
-                          onChange={(e) => handleDescChange(e, index)}
-                          sx={{ width: '40vw' }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <TextField
-                          sx={{ width: '200px ' }}
-                          value={formik.values.billPrice[index]}
-                          onChange={(e) => handlePriceChange(e, index)}
-                          type="number"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Button onClick={(e) => editBillForm(e, 'add')}>
-                          <AddIcon />
-                        </Button>
-                        <Button onClick={(e) => editBillForm(e, 'remove', index)}>
-                          <RemoveIcon />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  <label>Total: </label>
-                  <TextField
-                    InputProps={{
-                      readOnly: true
-                    }}
-                    name="total"
-                    id="total"
-                    type="number"
-                    value={formik.values.total}
-                  />
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : null}
+          <BillForm
+            isBillForm={isBillForm}
+            formik={formik}
+            handleDescChange={handleDescChange}
+            handlePriceChange={handlePriceChange}
+            editBillForm={editBillForm}
+          />
           <br /> <br />
-          {isBillForm || formik.values.billImg ? (
-            <TableContainer className="split-table">
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell></TableCell>
-                    <TableCell>Owned</TableCell>
-                    <TableCell>Notes</TableCell>
-                  </TableRow>
-                </TableHead>
-
-                <TableBody>
-                  <FieldArray name="members">
-                    {({ push, remove }) => (
-                      <>
-                        {formik.values.members.map((elem, index) => {
-                          const name = `members[${index}].owned`
-                          const name2 = `members[${index}].fixed`
-                          return (
-                            <TableRow key={index}>
-                              <TableCell>
-                                <TextField
-                                  type="number"
-                                  margin="normal"
-                                  variant="outlined"
-                                  label="owned"
-                                  name={name}
-                                  value={elem.owned}
-                                  onChange={(e) => handleOwnedChange(e, index)}
-                                  required
-                                />
-                                <FormControlLabel
-                                  label="Fixed"
-                                  name={name2}
-                                  value={elem.fixed}
-                                  control={<Checkbox checked={elem.fixed} />}
-                                  onChange={(e) => handleFixedCheck(e, index)}
-                                />
-                              </TableCell>
-                            </TableRow>
-                          )
-                        })}
-                      </>
-                    )}
-                  </FieldArray>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : null}
+          <SplitForm
+            isBillForm={isBillForm}
+            formik={formik}
+            handleFixedCheck={handleFixedCheck}
+            handleOwnedChange={handleOwnedChange}
+          />
         </Form>
       </Formik>
-
-      <>
-        <pre style={{ textAlign: 'left' }}>
-          <strong>Values</strong>
-          <br />
-          {JSON.stringify(formik.values, null, 2)}
-        </pre>
-        <pre style={{ textAlign: 'left' }}>
-          <strong>Errors</strong>
-          <br />
-          {JSON.stringify(formik.errors, null, 2)}
-        </pre>
-      </>
     </>
   )
 }

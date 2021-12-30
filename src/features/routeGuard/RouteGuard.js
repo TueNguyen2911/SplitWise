@@ -7,14 +7,30 @@ import { Redirect } from 'react-router-dom'
  * @returns component for App to render
  */
 const RouteGuard = ({ path, components }) => {
-  const userId = useSelector((state) => state.auth.userId)
-  if (path === '/login') {
-    return <>{userId ? <Redirect to="/" /> : components.map((component) => <> {component} </>)}</>
-  }
+  const userAuth = useSelector((state) => state.userAuth)
+  if (userAuth.status == 'succeeded') {
+    if (path === '/login') {
+      return (
+        <>
+          {userAuth.userId ? (
+            <Redirect to="/" />
+          ) : (
+            components.map((component) => <> {component} </>)
+          )}
+        </>
+      )
+    }
 
-  return (
-    <>{userId ? components.map((component) => <> {component} </>) : <Redirect to="/login" />}</>
-  )
+    return (
+      <>
+        {userAuth.userId ? (
+          components.map((component) => <> {component} </>)
+        ) : (
+          <Redirect to="/login" />
+        )}
+      </>
+    )
+  }
 }
 
 export default RouteGuard

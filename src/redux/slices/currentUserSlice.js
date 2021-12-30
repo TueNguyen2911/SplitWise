@@ -4,7 +4,7 @@ import { db } from '../../firebase/config'
 
 export const getUserById = createAsyncThunk('user/getUserById', async (arg, thunkAPI) => {
   try {
-    const userId = thunkAPI.getState().auth.userId
+    const userId = thunkAPI.getState().userAuth.userId
     const docSnap = await getDoc(doc(db, 'Users', userId))
     console.log(docSnap.data())
     return docSnap.data()

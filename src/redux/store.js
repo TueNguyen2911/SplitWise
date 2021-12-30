@@ -5,7 +5,7 @@ import groupReducer from './slices/groupSlice'
 import usersReducer from './slices/usersSlice'
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
+    userAuth: authReducer,
     currentUser: currentUserReducer,
     groups: groupReducer,
     users: usersReducer

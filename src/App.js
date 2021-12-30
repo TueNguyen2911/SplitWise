@@ -19,29 +19,41 @@ import { auth } from './firebase/config'
 import { saveUserAuth } from './redux/slices/userAuthSlice'
 import { getUserById } from './redux/slices/currentUserSlice'
 import { getAllGroups } from './redux/slices/groupSlice'
+import { getUsersByIds } from './redux/slices/usersSlice'
 function App() {
   const [sideBarWidth, setSideBarWidth] = useState(0)
-  const { status } = useSelector((state) => state.auth)
-  const userStatus = useSelector((state) => state.currentUser.status)
+  const userAuth = useSelector((state) => state.userAuth)
+  const currentUser = useSelector((state) => state.currentUser)
+  const groups = useSelector((state) => state.groups)
   const dispatch = useDispatch()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         dispatch(saveUserAuth(user.uid))
-        dispatch(getUserById())
       } else {
         dispatch(saveUserAuth(null))
       }
     })
   }, [auth, dispatch])
   useEffect(() => {
-    if (userStatus === 'succeeded') {
+    if (userAuth.status === 'succeeded' && userAuth.userId) {
+      dispatch(getUserById())
+    }
+  }, [userAuth.status])
+  useEffect(() => {
+    if (currentUser.status === 'succeeded') {
       dispatch(getAllGroups())
     }
-  }, [userStatus])
+  }, [currentUser.status])
+  useEffect(() => {
+    if (groups.status === 'succeeded') {
+      console.log(groups.memberId)
+      dispatch(getUsersByIds(groups.memberId))
+    }
+  }, [groups.status])
   return (
     <div className="App">
-      {status === 'succeeded' ? (
+      {userAuth.status === 'succeeded' ? (
         <>
           <Router>
             <RouteGuard
@@ -72,7 +84,11 @@ function App() {
             </MainContent>
           </Router>
         </>
-      ) : null}
+      ) : (
+        <>
+          <Login />
+        </>
+      )}
     </div>
   )
 }

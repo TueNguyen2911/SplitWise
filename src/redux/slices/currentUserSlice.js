@@ -6,7 +6,6 @@ export const getUserById = createAsyncThunk('currentUser/getUserById', async (ar
   try {
     const userId = thunkAPI.getState().userAuth.userId
     const docSnap = await getDoc(doc(db, 'Users', userId))
-    console.log(docSnap.data())
     return docSnap.data()
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message)

@@ -33,7 +33,6 @@ const ExpenseForm2 = () => {
   const handleOwnedChange = (e, index) => {
     const value = Number(e.target.value)
     const average = formik.values.total / formik.values.members.length
-    console.log('value', e.target.value)
     if (value > formik.values.total || value < 0) {
       return
     }
@@ -43,16 +42,13 @@ const ExpenseForm2 = () => {
       newMemebers[index].owned = value
       let allFixedOwned = 0
       newMemebers.forEach((elem, index) => {
-        console.log(`${index} ${allFixedOwned}`)
         if (elem.fixed) {
           allFixedOwned += elem.owned
         }
       })
-      console.log('allFixedOwned', allFixedOwned)
       const restTotal = formik.values.total - allFixedOwned
       if (restTotal < 0) return
       const newAvg = restTotal / newMemebers.length
-      console.log('newAvg', newAvg)
       newMemebers.forEach((elem, index) => {
         if (!elem.fixed) {
           elem.owned = newAvg

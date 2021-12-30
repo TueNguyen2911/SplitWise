@@ -36,7 +36,50 @@ const ExpenseForm = () => {
   const expenseForm = useSelector((state) => state.expenseForm)
   const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
+  console.log(expenseForm.data)
 
+  const validationSchema = yup.object().shape({
+    billDesc: yup.array().of(yup.string()),
+    billPrice: yup.array().of(yup.number()),
+    total: yup.number(),
+    billImg: yup.object()
+  })
+  const intitalValues = {
+    id: '3FVeiEeThLY',
+    name: 'Pizza',
+    billDesc: [''],
+    billPrice: [0],
+    total: 0,
+    billImg: '',
+    billImgTotal: 0,
+    members: [
+      {
+        id: 'rFRlyHsEHkYqTVUR1W8qnLrUcdA2',
+        owned: 0,
+        note: '',
+        fixed: false
+      },
+      {
+        id: 'sYRNy0yUILXEk6iaDO4x0sCJVBm1',
+        owned: 0,
+        note: '',
+        fixed: false
+      },
+      {
+        id: 'QFL6TuMHh7cqviA0S1Npr1QjC4K2',
+        owned: 0,
+        note: '',
+        fixed: false
+      }
+    ]
+  }
+  const formik = useFormik({
+    initialValues: intitalValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2))
+    }
+  })
   useEffect(() => {
     dispatch(getExpenseFormById(expenseFormId))
   }, [dispatch])
@@ -45,50 +88,16 @@ const ExpenseForm = () => {
     if (expenseForm.status === 'succeeded') {
       const memberIds = expenseForm.data.members.map((elem) => elem.id)
       dispatch(getUsersByIds(memberIds))
+      const expenseFormData = JSON.parse(JSON.stringify(expenseForm.data))
+      expenseFormData.billImg = null
+      formik.setValues(expenseFormData)
     }
   }, [expenseForm.status])
   //setting up form
-  const validationSchema = yup.object().shape({
-    billDesc: yup.array().of(yup.string()),
-    billPrice: yup.array().of(yup.number()),
-    total: yup.number(),
-    billImg: yup.object()
-  })
-  const initialValues = {
-    name: 'Pizza',
-    billDesc: [''],
-    billPrice: [0],
-    total: 0,
-    billImg: null,
-    billImgTotal: 0,
-    members: [
-      {
-        uid: '123',
-        owned: 0,
-        note: 'Haha 123',
-        fixed: false
-      },
-      {
-        uid: '1231',
-        owned: 0,
-        note: 'Haha 123',
-        fixed: false
-      },
-      {
-        uid: '1223',
-        owned: 0,
-        note: 'Haha 123',
-        fixed: false
-      }
-    ]
-  }
-  const formik = useFormik({
-    initialValues: initialValues,
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2))
-    }
-  })
+
+  useEffect(() => {
+    console.log(formik.values)
+  }, [formik.values])
   //helper functions
   const handleFixedCheck = (e, index) => {
     if (formik.values.members[index].fixed) {
@@ -183,7 +192,6 @@ const ExpenseForm = () => {
       fixedTotal > formik.values.total ||
       !formik.values.members[index].fixed
     ) {
-      console.log('returned')
       return
     }
     const fixedCount = getFixedCount(newMembers)
@@ -238,10 +246,7 @@ const ExpenseForm = () => {
       billDescArr[currLength] = ''
       billPriceArr[currLength] = 0
     } else if (operation === 'remove' && currLength > 1) {
-      console.log(billPriceArr)
       billDescArr.splice(index, 1)
-      console.log(billPriceArr.splice(index, 1))
-      console.log(billPriceArr)
     }
     const newMembers = [...formik.values.members]
     const newTotal = getTotal(billPriceArr)
@@ -294,6 +299,9 @@ const ExpenseForm = () => {
       formik.setValues({ ...formik.values, billImgTotal: formik.values.total })
     }
   }, [formik.values.total])
+  if (!formik.values) {
+    return null
+  }
   return (
     <>
       <Formik
@@ -302,9 +310,6 @@ const ExpenseForm = () => {
         style={{ textAlign: 'left', margin: '10px 20px' }}
       >
         <Form>
-          <Button sx={{ float: 'right' }} variant="outlined" color="error">
-            Delete
-          </Button>
           <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
           <Tooltip
             title={isBillForm ? 'Only the bill image or the bill form' : 'Upload a receipt image'}

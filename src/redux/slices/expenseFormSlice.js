@@ -7,9 +7,7 @@ export const getExpenseFormById = createAsyncThunk(
   'expenseForm/getExpenseFormById',
   async (expenseFormId, thunkAPI) => {
     try {
-      console.log(expenseFormId)
       const docSnap = await getDoc(doc(db, 'ExpenseForms', expenseFormId))
-      console.log(docSnap.data())
       return docSnap.data()
     } catch (error) {
       thunkAPI.rejectWithValue(error.message)

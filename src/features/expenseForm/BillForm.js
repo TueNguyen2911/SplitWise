@@ -33,6 +33,7 @@ const BillForm = ({ isBillForm, formik, handleDescChange, handlePriceChange, edi
                     <TextField
                       value={formik.values.billDesc[index]}
                       multiline
+                      label="Item description"
                       onChange={(e) => handleDescChange(e, index)}
                       sx={{ width: '40vw' }}
                     />

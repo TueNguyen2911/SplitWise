@@ -34,10 +34,13 @@ const ExpenseForm = () => {
   const [isBillForm, setIsBillForm] = useState(false)
   const { expenseFormId } = useParams()
   const expenseForm = useSelector((state) => state.expenseForm)
+  const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
+
   useEffect(() => {
     dispatch(getExpenseFormById(expenseFormId))
   }, [dispatch])
+
   useEffect(() => {
     if (expenseForm.status === 'succeeded') {
       const memberIds = expenseForm.data.members.map((elem) => elem.id)
@@ -240,16 +243,25 @@ const ExpenseForm = () => {
       console.log(billPriceArr.splice(index, 1))
       console.log(billPriceArr)
     }
+    const newMembers = [...formik.values.members]
     const newTotal = getTotal(billPriceArr)
+    const fixedCount = getFixedCount(newMembers)
     const fixedTotal = getFixedTotal(formik.values.members)
     if (newTotal < fixedTotal) {
       return
     }
+    const restAverage = (newTotal - fixedTotal) / (newMembers.length - fixedCount)
+    newMembers.forEach((elem, index) => {
+      if (!elem.fixed) {
+        elem.owned = restAverage
+      }
+    })
     formik.setValues({
       ...formik.values,
       billPrice: billPriceArr,
       billDesc: billDescArr,
-      total: newTotal
+      total: newTotal,
+      members: newMembers
     })
   }
   const handleBillImgTotalChange = (e) => {
@@ -350,6 +362,7 @@ const ExpenseForm = () => {
           />
           <br /> <br />
           <SplitForm
+            users={users.data}
             isBillForm={isBillForm}
             formik={formik}
             handleFixedCheck={handleFixedCheck}

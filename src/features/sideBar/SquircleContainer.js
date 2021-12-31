@@ -2,7 +2,7 @@ import { Toolbar, Tooltip, tooltipClasses } from '@mui/material'
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/system'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useHistory, useRouteMatch } from 'react-router-dom'
 const PopperDiv = styled.div`
   background-color: black;
   position: absolute;
@@ -137,7 +137,7 @@ const SquircleContainer = ({ setSBWidth, groups }) => {
           <DividerLi></DividerLi>
           {groups.map((elem) => (
             <DiscordTooltip title={elem.name} placement="right">
-              <SquircleLi onClick={() => history.push('/expenses')}>
+              <SquircleLi onClick={() => history.push(`/group/${elem.id}`)}>
                 <GroupIconImg src={elem.avatar} />
               </SquircleLi>
             </DiscordTooltip>

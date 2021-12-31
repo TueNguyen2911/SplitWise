@@ -22,7 +22,8 @@ export const expenseFormSlice = createSlice({
     saveExpenseFormData: (state, action) => {
       state.data = action.payload
       state.status = 'succeeded'
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: (builder) => {
     builder

@@ -72,13 +72,9 @@ const ExpenseCard = () => {
             </StyledCard>
           ))
         ) : (
-          <>loading</>
+          <>Hmm it's empty</>
         )}
       </CardContainer>
-
-      <Route exact path={`${path}/expense/:expenseFormId`}>
-        <ExpenseTab />
-      </Route>
     </div>
   )
 }

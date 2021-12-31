@@ -5,9 +5,9 @@ const initialState = { data: [{}], status: 'idle', error: null }
 
 export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, thunkAPI) => {
   try {
-    const groupId = thunkAPI.getState().currentUser.data.groupId
+    const groupIds = thunkAPI.getState().currentUser.data.groupIds
     let groupData = []
-    const q = query(collection(db, 'Groups'), where('id', 'in', groupId))
+    const q = query(collection(db, 'Groups'), where('id', 'in', groupIds))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
       groupData.push(Object(doc.data()))
@@ -32,7 +32,8 @@ export const groupSlice = createSlice({
   reducers: {
     saveGroupData: (state, action) => {
       state.data = action.payload
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: (builder) => {
     builder

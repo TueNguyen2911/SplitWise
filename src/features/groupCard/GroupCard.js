@@ -42,18 +42,21 @@ export default function GroupCard() {
             <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
               <CardMedia
                 component="img"
-                sx={{ width: '165px', height: '165px', objectFit: 'cover' }}
+                sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
                 image={elem.avatar}
                 alt="Live from space album cover"
               />
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
-                {elem.members.map((elem) => (
-                  <Avatar alt={elem.name} src={elem.avatar} />
-                ))}
+              <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
+                {elem.members.map((elem, index) => {
+                  if (index < 8) {
+                    return <Avatar alt={elem.name} src={elem.avatar} />
+                  }
+                  return null
+                })}
               </Box>
             </Box>
             <Divider />
-            <CardContent sx={{ textAlign: 'left' }}>Ngu</CardContent>
+            <CardContent sx={{ textAlign: 'left' }}>{elem.name}</CardContent>
           </StyledCard>
         ))
       ) : (

@@ -29,7 +29,8 @@ export const userAuthSlice = createSlice({
     saveUserAuth: (state, action) => {
       state.userId = action.payload
       state.status = 'succeeded'
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: (builder) => {
     builder

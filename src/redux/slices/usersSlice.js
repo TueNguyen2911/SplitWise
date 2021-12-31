@@ -25,7 +25,8 @@ export const usersSlice = createSlice({
   reducers: {
     saveUsersData: (state, action) => {
       state.data = action.payload
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: (builder) => {
     builder

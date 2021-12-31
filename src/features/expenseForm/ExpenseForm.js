@@ -302,6 +302,7 @@ const ExpenseForm = () => {
   if (!formik.values) {
     return null
   }
+
   return (
     <>
       <Formik

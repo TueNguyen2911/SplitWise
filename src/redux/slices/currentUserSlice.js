@@ -21,7 +21,8 @@ export const currentUserSlice = createSlice({
     saveCurrentUserData: (state, action) => {
       state.data = action.payload
       state.status = 'succeeded'
-    }
+    },
+    reset: () => initialState
   },
   extraReducers: (builder) => {
     builder

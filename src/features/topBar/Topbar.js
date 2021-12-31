@@ -50,6 +50,7 @@ const TopbarContainer = () => {
   }
   const logOut = () => {
     dispatch(logout())
+    window.location.reload()
   }
   const menuId = 'primary-search-account-menu'
   const renderMenu = (

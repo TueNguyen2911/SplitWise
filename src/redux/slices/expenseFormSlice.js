@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore'
+import { getDoc, doc, updateDoc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 const initialState = { data: {}, status: 'idle', error: null }
 
@@ -10,7 +10,21 @@ export const getExpenseFormById = createAsyncThunk(
       const docSnap = await getDoc(doc(db, 'ExpenseForms', expenseFormId))
       return docSnap.data()
     } catch (error) {
-      thunkAPI.rejectWithValue(error.message)
+      return thunkAPI.rejectWithValue(error.message)
+    }
+  }
+)
+
+export const updateExpenseForm = createAsyncThunk(
+  'expenseForm/updateExpenseForm',
+  async (updateObj, thunkAPI) => {
+    try {
+      const id = thunkAPI.getState().expenseForm.data.id
+      await updateDoc(doc(db, 'ExpenseForms', id), updateObj)
+      thunkAPI.dispatch(getExpenseFormById(id))
+      return 'updated'
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message)
     }
   }
 )
@@ -39,6 +53,15 @@ export const expenseFormSlice = createSlice({
         state.status = 'failed'
         state.error = action.payload
         state.data = {}
+      })
+      .addCase(updateExpenseForm.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(updateExpenseForm.fulfilled, (state, action) => {
+        state.status = 'succeeded'
+      })
+      .addCase(updateExpenseForm.rejected, (state, action) => {
+        state.status = 'failed'
       })
   }
 })

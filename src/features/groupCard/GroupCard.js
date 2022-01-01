@@ -9,6 +9,8 @@ import { styled } from '@mui/system'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUsersByIds } from '../../redux/slices/usersSlice'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { db } from '../../firebase/config'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',

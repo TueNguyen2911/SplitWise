@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 
 export const getUserById = createAsyncThunk('currentUser/getUserById', async (arg, thunkAPI) => {

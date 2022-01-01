@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { auth } from '../../firebase/config'
 import {
   Menu,
@@ -25,7 +25,7 @@ import { logout } from '../../redux/slices/userAuthSlice'
 
 const TopbarContainer = () => {
   const dispatch = useDispatch()
-  const userData = useSelector((state) => state.currentUser.data)
+  const currentUser = useSelector((state) => state.currentUser)
   const [anchorEl, setAnchorEl] = React.useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
 
@@ -52,7 +52,7 @@ const TopbarContainer = () => {
     dispatch(logout())
     window.location.reload()
   }
-  const menuId = 'primary-search-account-menu'
+  const menuId = 'top-bar-menu'
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
@@ -70,7 +70,7 @@ const TopbarContainer = () => {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>{userData.userName}</MenuItem>
+      <MenuItem onClick={handleMenuClose}>{currentUser.data.userName}</MenuItem>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
       <Divider />
       <MenuItem onClick={handleMenuClose}>Close</MenuItem>
@@ -120,7 +120,7 @@ const TopbarContainer = () => {
         >
           <AccountCircle />
         </IconButton>
-        <p>{userData.name}</p>
+        <p>{currentUser.data.name}</p>
       </MenuItem>
     </Menu>
   )
@@ -153,7 +153,7 @@ const TopbarContainer = () => {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <Avatar alt="Remy Sharp" src={userData.avatar} />
+                <Avatar alt="Remy Sharp" src={currentUser.data.avatar} />
               </IconButton>
             </Box>
             <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

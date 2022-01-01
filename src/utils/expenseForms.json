@@ -2,6 +2,7 @@
   {
     "id": "3FVeiEeThLY",
     "name": "Pizza",
+    "isBillForm": false,
     "billDesc": [""],
     "billPrice": [0],
     "total": 0,

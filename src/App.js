@@ -20,11 +20,13 @@ import { saveUserAuth } from './redux/slices/userAuthSlice'
 import { getUserById } from './redux/slices/currentUserSlice'
 import { getAllGroups } from './redux/slices/groupSlice'
 import { getUsersByIds } from './redux/slices/usersSlice'
+import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { db } from './firebase/config'
+
 function App() {
   const [sideBarWidth, setSideBarWidth] = useState(0)
   const userAuth = useSelector((state) => state.userAuth)
   const currentUser = useSelector((state) => state.currentUser)
-  const groups = useSelector((state) => state.groups)
   const dispatch = useDispatch()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -38,7 +40,10 @@ function App() {
 
   useEffect(() => {
     if (userAuth.status === 'succeeded' && userAuth.userId) {
-      dispatch(getUserById())
+      const unsub = onSnapshot(doc(db, 'Users', userAuth.userId), (doc) => {
+        console.log(doc.data())
+        dispatch(getUserById())
+      })
     }
   }, [userAuth.status])
 

@@ -1,7 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { collection, query, where, getDocs, getDoc, doc, onSnapshot } from 'firebase/firestore'
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  doc,
+  onSnapshot,
+  setDoc,
+  updateDoc
+} from 'firebase/firestore'
 import { db } from '../../firebase/config'
-const initialState = { data: [{}], status: 'idle', error: null }
+const initialState = { data: [{}], status: 'idle', error: null, createStatus: 'idle' }
 
 export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, thunkAPI) => {
   try {
@@ -25,7 +35,24 @@ export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, 
     return thunkAPI.rejectWithValue(error.message)
   }
 })
+export const createGroup = createAsyncThunk('groups/createGroup', async (arg, thunkAPI) => {
+  try {
+    const currentUser = thunkAPI.getState().currentUser.data
+    const groupObj = { ...arg, members: [], expenses: [] }
+    groupObj.memberIds.unshift(currentUser.id)
+    if (groupObj.avatar.length === 0) {
+      groupObj.avatar =
+        'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/Screenshot%202022-01-01%20212759.png?alt=media&token=e5175b8f-a207-4ae3-a514-66491d7e9a00'
+    }
+    const groupIds = JSON.parse(JSON.stringify(currentUser.groupIds))
+    groupIds.push(groupObj.id)
 
+    await setDoc(doc(db, 'Groups', groupObj.id), groupObj)
+    await updateDoc(doc(db, 'Users', currentUser.id), { groupIds })
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.message)
+  }
+})
 export const groupSlice = createSlice({
   name: 'groups',
   initialState,
@@ -49,6 +76,16 @@ export const groupSlice = createSlice({
         state.status = 'failed'
         state.error = action.payload
         state.data = {}
+      })
+      .addCase(createGroup.pending, (state, action) => {
+        state.createStatus = 'loading'
+      })
+      .addCase(createGroup.fulfilled, (state, action) => {
+        state.createStatus = 'succeeded'
+      })
+      .addCase(createGroup.rejected, (state, action) => {
+        state.createStatus = 'failed'
+        state.error = action.payload
       })
   }
 })

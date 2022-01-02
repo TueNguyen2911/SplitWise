@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/system'
 import { Link, useHistory, useRouteMatch } from 'react-router-dom'
+import AddIcon from '@mui/icons-material/Add'
 const PopperDiv = styled.div`
   background-color: black;
   position: absolute;
@@ -95,10 +96,6 @@ const DividerLi = styled.li`
   transform: scale(0.75);
 `
 
-const PopperTextH4 = styled.h4`
-  margin: 0;
-`
-
 const GroupIconImg = styled.img`
   height: inherit;
   width: inherit;
@@ -119,7 +116,7 @@ const DiscordTooltip = styled(({ className, ...props }) => (
   }
 }))
 
-const SquircleContainer = ({ setSBWidth, groups }) => {
+const SquircleContainer = ({ setCreateGroup, setSBWidth, groups }) => {
   const componentRef = useRef()
   const history = useHistory()
   useEffect(() => {
@@ -131,7 +128,13 @@ const SquircleContainer = ({ setSBWidth, groups }) => {
       <SideBarNav>
         <SquirclesUl ref={componentRef}>
           <DiscordTooltip title="Home" placement="right">
-            <SquircleLi onClick={() => history.push('/')}></SquircleLi>
+            <SquircleLi onClick={() => history.push('/')}>
+              <GroupIconImg
+                src={
+                  'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/Screenshot%202022-01-01%20212759.png?alt=media&token=e5175b8f-a207-4ae3-a514-66491d7e9a00'
+                }
+              />
+            </SquircleLi>
           </DiscordTooltip>
 
           <DividerLi></DividerLi>
@@ -142,6 +145,12 @@ const SquircleContainer = ({ setSBWidth, groups }) => {
               </SquircleLi>
             </DiscordTooltip>
           ))}
+
+          <DiscordTooltip title="Create group" placement="right">
+            <SquircleLi className="green-squircle" onClick={() => setCreateGroup(true)}>
+              <AddIcon className="add-icon" fontSize="large" sx={{ color: '#4fc96f' }} />
+            </SquircleLi>
+          </DiscordTooltip>
         </SquirclesUl>
       </SideBarNav>
     </>

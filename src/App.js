@@ -22,9 +22,11 @@ import { getAllGroups } from './redux/slices/groupSlice'
 import { getUsersByIds } from './redux/slices/usersSlice'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase/config'
+import CreateGroup from './features/createGroup/CreateGroup'
 
 function App() {
   const [sideBarWidth, setSideBarWidth] = useState(0)
+  const [createGroup, setCreateGroup] = useState(false)
   const userAuth = useSelector((state) => state.userAuth)
   const currentUser = useSelector((state) => state.currentUser)
   const dispatch = useDispatch()
@@ -58,8 +60,12 @@ function App() {
       {userAuth.status === 'succeeded' ? (
         <>
           <Router>
-            <RouteGuard components={[<SidebarContainer setSBWidth={setSideBarWidth} />]} />
-            <MainContent SBWidth={sideBarWidth}>
+            <RouteGuard
+              components={[
+                <SidebarContainer setCreateGroup={setCreateGroup} setSBWidth={setSideBarWidth} />
+              ]}
+            />
+            <MainContent className="main-content" createGroup={createGroup} SBWidth={sideBarWidth}>
               <RouteGuard components={[<TopbarContainer />]} />
 
               <Route exact path="/">
@@ -80,6 +86,11 @@ function App() {
               <Route path="/group/:groupId/expense/:expenseFormId">
                 <ExpenseForm />
               </Route>
+              {createGroup ? (
+                <>
+                  <CreateGroup setCreateGroup={setCreateGroup} />
+                </>
+              ) : null}
             </MainContent>
           </Router>
         </>

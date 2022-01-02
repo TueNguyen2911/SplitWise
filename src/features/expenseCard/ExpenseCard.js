@@ -7,7 +7,6 @@ import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useHistory, useLocation, useParams, useRouteMatch, Route, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import queryString from 'query-string'
 import ExpenseForm from '../expenseForm/ExpenseForm'
 import ExpenseTab from '../expenseTab/ExpenseTab'
 

@@ -2,11 +2,11 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import SquircleContainer from './SquircleContainer'
 
-const SidebarContainer = ({ setSBWidth }) => {
+const SidebarContainer = ({ setCreateGroup, setSBWidth }) => {
   const groups = useSelector((state) => state.groups.data)
   return (
     <>
-      <SquircleContainer setSBWidth={setSBWidth} groups={groups} />
+      <SquircleContainer setCreateGroup={setCreateGroup} setSBWidth={setSBWidth} groups={groups} />
     </>
   )
 }

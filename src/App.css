@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  background-color: #61dafb;
 }
 
 .App-logo {
@@ -95,4 +96,7 @@
   right: 0;
   opacity: 0;
   pointer-events: none;
+}
+.green-squircle:hover {
+  background-color: #bff5cd;
 }

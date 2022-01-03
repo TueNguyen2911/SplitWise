@@ -8,6 +8,7 @@ import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { saveAppState } from '../../redux/slices/appSlice'
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
   width: '330px',
@@ -32,6 +33,9 @@ export default function GroupCard() {
   const { data, status } = useSelector((state) => state.groups)
   const dispatch = useDispatch()
   const history = useHistory()
+  useEffect(() => {
+    dispatch(saveAppState({ membersIcon: false }))
+  }, [])
   return (
     <CardContainer>
       {status === 'succeeded' ? (

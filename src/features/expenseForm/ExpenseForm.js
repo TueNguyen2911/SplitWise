@@ -14,6 +14,8 @@ import { useSelector } from 'react-redux'
 import { getUsersByIds } from '../../redux/slices/usersSlice'
 import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../firebase/config'
+import { saveAppState } from '../../redux/slices/appSlice'
+import ShowMembers from '../showMembers/ShowMembers'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
@@ -64,15 +66,9 @@ const ExpenseForm = () => {
       alert(JSON.stringify(values, null, 2))
     }
   })
-  // useEffect(() => {
-  //   dispatch(getExpenseFormById(expenseFormId))
-  // }, [dispatch])
-
-  //setting up form
-
-  // useEffect(() => {
-  //   console.log(formik.values)
-  // }, [formik.values])
+  useEffect(() => {
+    dispatch(saveAppState({ membersIcon: true }))
+  }, [])
   //helper functions
   const handleFixedCheck = (e, index) => {
     if (formik.values.members[index].fixed) {

@@ -6,9 +6,10 @@ import Divider from '@mui/material/Divider'
 import { Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useHistory, useLocation, useParams, useRouteMatch, Route, Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import ExpenseForm from '../expenseForm/ExpenseForm'
 import ExpenseTab from '../expenseTab/ExpenseTab'
+import { saveAppState } from '../../redux/slices/appSlice'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -32,11 +33,11 @@ const CardContainer = styled('div')({
 
 const ExpenseCard = () => {
   const history = useHistory()
-  const { search } = useLocation()
   const { groupId } = useParams()
   const { path, url } = useRouteMatch()
   const groups = useSelector((state) => state.groups.data)
   const [expenses, setExpenses] = useState([])
+  const dispatch = useDispatch()
   useEffect(() => {
     if (groupId && groups.length > 0) {
       const locExpenses = groups.map((elem, idx) => {
@@ -47,6 +48,10 @@ const ExpenseCard = () => {
       setExpenses(locExpenses[0])
     }
   }, [groups, groupId])
+
+  useEffect(() => {
+    dispatch(saveAppState({ membersIcon: true }))
+  }, [])
   return (
     <div className="ExpenseCard">
       <CardContainer>

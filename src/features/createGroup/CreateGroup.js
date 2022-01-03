@@ -11,6 +11,7 @@ import { useDispatch } from 'react-redux'
 import { updateExpenseForm } from '../../redux/slices/expenseFormSlice'
 import { useSelector } from 'react-redux'
 import { createGroup } from '../../redux/slices/groupSlice'
+import { saveAppState } from '../../redux/slices/appSlice'
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '330px',
   boxShadow: '1px 1px 2px',
@@ -22,7 +23,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     opacity: '0.5'
   }
 }))
-const CreateGroup = ({ setCreateGroup }) => {
+const CreateGroup = () => {
   const dispatch = useDispatch()
   const groups = useSelector((state) => state.groups)
   const validationSchema = yup.object().shape({
@@ -44,7 +45,7 @@ const CreateGroup = ({ setCreateGroup }) => {
   useEffect(() => {
     if (groups.createStatus === 'succeeded') {
       window.alert(`Added ${createGroupForm.values.name} successfully`)
-      setCreateGroup(false)
+      dispatch(saveAppState({ createGroup: false }))
     }
   }, [groups.createStatus])
   const inputImgRef = useRef()
@@ -110,7 +111,10 @@ const CreateGroup = ({ setCreateGroup }) => {
             <Button type="submit" variant="contained">
               Create
             </Button>
-            <Button variant="outlined" onClick={() => setCreateGroup(false)}>
+            <Button
+              variant="outlined"
+              onClick={() => dispatch(saveAppState({ createGroup: false }))}
+            >
               Cancel
             </Button>
           </Form>

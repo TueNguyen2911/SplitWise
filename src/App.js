@@ -23,12 +23,12 @@ import { getUsersByIds } from './redux/slices/usersSlice'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
+import ShowMembers from './features/showMembers/ShowMembers'
 
 function App() {
-  const [sideBarWidth, setSideBarWidth] = useState(0)
-  const [createGroup, setCreateGroup] = useState(false)
   const userAuth = useSelector((state) => state.userAuth)
   const currentUser = useSelector((state) => state.currentUser)
+  const appState = useSelector((state) => state.app)
   const dispatch = useDispatch()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -60,12 +60,12 @@ function App() {
       {userAuth.status === 'succeeded' ? (
         <>
           <Router>
-            <RouteGuard
-              components={[
-                <SidebarContainer setCreateGroup={setCreateGroup} setSBWidth={setSideBarWidth} />
-              ]}
-            />
-            <MainContent className="main-content" createGroup={createGroup} SBWidth={sideBarWidth}>
+            <RouteGuard components={[<SidebarContainer />]} />
+            <MainContent
+              className="main-content"
+              createGroup={appState.data.createGroup}
+              SBWidth={appState.data.sideBarWidth}
+            >
               <RouteGuard components={[<TopbarContainer />]} />
 
               <Route exact path="/">
@@ -73,6 +73,7 @@ function App() {
               </Route>
               <Route exact path="/group/:groupId">
                 <RouteGuard components={[<ExpenseCard />]} />
+                <RouteGuard components={[<ShowMembers />]} />
               </Route>
               <Route exact path="/form">
                 <RouteGuard components={[<ExpenseForm />]} />
@@ -85,10 +86,11 @@ function App() {
               </Route>
               <Route path="/group/:groupId/expense/:expenseFormId">
                 <ExpenseForm />
+                <ShowMembers />
               </Route>
-              {createGroup ? (
+              {appState.data.createGroup ? (
                 <>
-                  <CreateGroup setCreateGroup={setCreateGroup} />
+                  <CreateGroup />
                 </>
               ) : null}
             </MainContent>
@@ -96,7 +98,7 @@ function App() {
         </>
       ) : userAuth.status === 'failed' ? (
         <>
-          <MainContent SBWidth={sideBarWidth}>
+          <MainContent SBWidth={appState.data.sideBarWidth}>
             <Login />
           </MainContent>
         </>

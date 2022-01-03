@@ -44,8 +44,8 @@ const AddMemberPaper = () => {
           }}
         >
           <Title />
-          <AddMember setUserId={setUserId} />
-          <Preview userId={userId} />
+          <AddMember setUserId={setUserId} userId={userId} />
+          <Preview setUserId={setUserId} userId={userId} />
         </Paper>
       ) : null}
     </div>

@@ -1,8 +1,10 @@
-import { getUserById } from '../../firebase/operations'
+import { addMember, getUserById } from '../../firebase/operations'
 import styled from 'styled-components'
 import { useParams } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { Avatar, Button, Paper } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUsersByIds } from '../../redux/slices/usersSlice'
 
 const AvatarLabel = styled.div`
   padding: 5px;
@@ -10,10 +12,23 @@ const AvatarLabel = styled.div`
   align-items: center;
 `
 
-const Preview = ({ userId }) => {
+const Preview = ({ userId, setUserId }) => {
+  const groups = useSelector((state) => state.groups)
   const [user, setUser] = useState(null)
   const [inGroup, setInGroup] = useState(false)
   const { groupId } = useParams()
+  const dispatch = useDispatch()
+  const handleAddClick = () => {
+    const add = async () => {
+      const { msg, error } = await addMember(user, groupId)
+      if (!error) {
+        setUserId('')
+        const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
+        dispatch(getUsersByIds(memberIds))
+      }
+    }
+    add()
+  }
   useEffect(() => {
     if (userId.length === 28) {
       const getUser = async () => {
@@ -40,7 +55,7 @@ const Preview = ({ userId }) => {
             {inGroup ? (
               <span style={{ marginLeft: 'auto' }}>Already in group!</span>
             ) : (
-              <Button variant="outlined" sx={{ marginLeft: 'auto' }}>
+              <Button onClick={handleAddClick} variant="outlined" sx={{ marginLeft: 'auto' }}>
                 Add
               </Button>
             )}

@@ -15,7 +15,13 @@ const AddMember = ({ userId, setUserId }) => {
   }
   return (
     <div className="AddMember">
-      <TextField label="user id" sx={{ width: '400px' }} onChange={(e) => handleUserIdChange(e)} />
+      <TextField
+        label="user id"
+        value={userId}
+        name="userId"
+        sx={{ width: '400px' }}
+        onChange={(e) => handleUserIdChange(e)}
+      />
     </div>
   )
 }

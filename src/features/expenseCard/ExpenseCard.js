@@ -11,6 +11,7 @@ import ExpenseForm from '../expenseForm/ExpenseForm'
 import ExpenseTab from '../expenseTab/ExpenseTab'
 import { saveAppState } from '../../redux/slices/appSlice'
 import GroupMenu from './GroupMenu'
+import AddMember from '../addMember/AddMember'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -86,6 +87,7 @@ const ExpenseCard = () => {
         )}
       </CardContainer>
       <GroupMenu />
+      <AddMember />
     </div>
   )
 }

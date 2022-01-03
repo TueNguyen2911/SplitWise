@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { auth } from '../../firebase/config'
 import {
   Menu,
@@ -7,27 +7,28 @@ import {
   AppBar,
   Toolbar,
   Box,
-  Typography,
   Divider,
   Avatar,
-  Button
+  Button,
+  Tooltip
 } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import AccountCircle from '@mui/icons-material/AccountCircle'
-import MenuIcon from '@mui/icons-material/Menu'
 import MailIcon from '@mui/icons-material/Mail'
 import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import LogoutIcon from '@mui/icons-material/Logout'
-import { signOut } from 'firebase/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../redux/slices/userAuthSlice'
-
+import GroupIcon from '@mui/icons-material/Group'
+import { saveAppState } from '../../redux/slices/appSlice'
 const TopbarContainer = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.currentUser)
-  const [anchorEl, setAnchorEl] = React.useState(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null)
+  const appState = useSelector((state) => state.app)
+  const topBarRef = useRef()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
 
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -124,56 +125,83 @@ const TopbarContainer = () => {
       </MenuItem>
     </Menu>
   )
+  useEffect(() => {
+    dispatch(saveAppState({ topBarHeight: topBarRef.current.offsetHeight }))
+  }, [])
   return (
-    <nav>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ background: 'white' }}>
-          <Toolbar>
-            <Box sx={{ flexGrow: 1 }} />
-            <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Button onClick={logOut} variant="outlined">
-                <LogoutIcon />
-              </Button>
-              <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                <Badge badgeContent={4} color="error">
-                  <MailIcon color="action" />
-                </Badge>
-              </IconButton>
-              <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-                <Badge badgeContent={17} color="error">
-                  <NotificationsIcon color="action" />
-                </Badge>
-              </IconButton>
-              <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-              >
-                <Avatar alt="Remy Sharp" src={currentUser.data.avatar} />
-              </IconButton>
-            </Box>
-            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                aria-label="show more"
-                aria-controls={mobileMenuId}
-                aria-haspopup="true"
-                onClick={handleMobileMenuOpen}
-                color="inherit"
-              >
-                <MoreIcon color="primary" />
-              </IconButton>
-            </Box>
-          </Toolbar>
-        </AppBar>
-        {renderMobileMenu}
-        {renderMenu}
-      </Box>
-    </nav>
+    <div className="TopBar" ref={topBarRef}>
+      <nav>
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static" sx={{ background: 'white' }}>
+            <Toolbar>
+              <Box sx={{ flexGrow: 1 }} />
+              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+                <Button sx={{ margin: '5px' }} onClick={logOut} variant="outlined">
+                  <LogoutIcon />
+                </Button>
+                {appState.data.membersIcon ? (
+                  <IconButton
+                    onClick={() =>
+                      dispatch(saveAppState({ showMembers: !appState.data.showMembers }))
+                    }
+                    size="large"
+                    aria-label="show group members"
+                    color="inherit"
+                  >
+                    <Tooltip title="Show group members" placement="bottom">
+                      <GroupIcon
+                        style={
+                          appState.data.showMembers
+                            ? { color: 'black' }
+                            : { color: 'rgba(0, 0, 0, 0.54)' }
+                        }
+                        color="action"
+                      />
+                    </Tooltip>
+                  </IconButton>
+                ) : null}
+
+                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                  <Badge badgeContent={4} color="error">
+                    <MailIcon color="action" />
+                  </Badge>
+                </IconButton>
+                <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
+                  <Badge badgeContent={17} color="error">
+                    <NotificationsIcon color="action" />
+                  </Badge>
+                </IconButton>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-controls={menuId}
+                  aria-haspopup="true"
+                  onClick={handleProfileMenuOpen}
+                  color="inherit"
+                >
+                  <Avatar alt="Remy Sharp" src={currentUser.data.avatar} />
+                </IconButton>
+              </Box>
+              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                <IconButton
+                  size="large"
+                  aria-label="show more"
+                  aria-controls={mobileMenuId}
+                  aria-haspopup="true"
+                  onClick={handleMobileMenuOpen}
+                  color="inherit"
+                >
+                  <MoreIcon color="primary" />
+                </IconButton>
+              </Box>
+            </Toolbar>
+          </AppBar>
+          {renderMobileMenu}
+          {renderMenu}
+        </Box>
+      </nav>
+    </div>
   )
 }
 

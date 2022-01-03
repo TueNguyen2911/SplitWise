@@ -4,6 +4,8 @@ import styled from 'styled-components'
 import { styled as muiStyled } from '@mui/system'
 import { Link, useHistory, useRouteMatch } from 'react-router-dom'
 import AddIcon from '@mui/icons-material/Add'
+import { useDispatch } from 'react-redux'
+import { saveAppState } from '../../redux/slices/appSlice'
 const PopperDiv = styled.div`
   background-color: black;
   position: absolute;
@@ -116,13 +118,13 @@ const DiscordTooltip = styled(({ className, ...props }) => (
   }
 }))
 
-const SquircleContainer = ({ setCreateGroup, setSBWidth, groups }) => {
+const SquircleContainer = ({ setSBWidth, groups }) => {
   const componentRef = useRef()
   const history = useHistory()
+  const dispatch = useDispatch()
   useEffect(() => {
-    setSBWidth(componentRef.current.offsetWidth)
+    dispatch(saveAppState({ sideBarWidth: componentRef.current.offsetWidth }))
   }, [])
-
   return (
     <>
       <SideBarNav>
@@ -147,7 +149,10 @@ const SquircleContainer = ({ setCreateGroup, setSBWidth, groups }) => {
           ))}
 
           <DiscordTooltip title="Create group" placement="right">
-            <SquircleLi className="green-squircle" onClick={() => setCreateGroup(true)}>
+            <SquircleLi
+              className="green-squircle"
+              onClick={() => dispatch(saveAppState({ createGroup: true }))}
+            >
               <AddIcon className="add-icon" fontSize="large" sx={{ color: '#4fc96f' }} />
             </SquircleLi>
           </DiscordTooltip>

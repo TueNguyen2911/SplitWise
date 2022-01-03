@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { Formik, Form, useFormik } from 'formik'
 import * as yup from 'yup'
-import { Button, Tooltip } from '@mui/material'
+import { Button, Tooltip, Typography } from '@mui/material'
 import Preview from './Preview'
 import BillImgForm from './BillImgForm'
 import BillForm from './BillForm'
@@ -299,12 +299,11 @@ const ExpenseForm = () => {
     return null
   }
   return (
-    <>
-      <Formik
-        className="ExpenseForm"
-        onSubmit={formik.handleSubmit}
-        style={{ textAlign: 'left', margin: '10px 20px' }}
-      >
+    <div className="ExpenseForm" style={{ textAlign: 'left', margin: '10px 10px' }}>
+      <Typography variant="h2" align="center">
+        {expenseForm.data.name}
+      </Typography>
+      <Formik onSubmit={formik.handleSubmit}>
         <Form>
           <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
           <Tooltip
@@ -313,7 +312,7 @@ const ExpenseForm = () => {
                 ? 'Only the bill image or the bill form'
                 : 'Upload a receipt image'
             }
-            placement="right"
+            placement="bottom"
           >
             <span>
               <Button
@@ -335,17 +334,15 @@ const ExpenseForm = () => {
                 style={{ display: 'none' }}
               />
             </span>
-          </Tooltip>
-          <br /> <br />
-          <BillImgForm handleBillImgTotalChange={handleBillImgTotalChange} formik={formik} />
-          <br /> <br />
+          </Tooltip>{' '}
+          <BillImgForm handleBillImgTotalChange={handleBillImgTotalChange} formik={formik} />{' '}
           <Tooltip
             title={
               formik.values.billImg
                 ? 'Only the bill image or the bill form'
                 : 'Open a form table to enter bill details'
             }
-            placement="right"
+            placement="bottom"
           >
             <span>
               <Button
@@ -361,7 +358,7 @@ const ExpenseForm = () => {
           <Button
             sx={{ marginLeft: '50px' }}
             htmlFor="update"
-            color="primary"
+            color="success"
             variant="contained"
             onClick={handleUpdateForm}
           >
@@ -384,7 +381,7 @@ const ExpenseForm = () => {
           />
         </Form>
       </Formik>
-    </>
+    </div>
   )
 }
 

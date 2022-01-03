@@ -6,7 +6,8 @@ import {
   TableRow,
   TableCell,
   TextField,
-  Button
+  Button,
+  Typography
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
@@ -56,16 +57,21 @@ const BillForm = ({ isBillForm, formik, handleDescChange, handlePriceChange, edi
                   </TableCell>
                 </TableRow>
               ))}
-              <label>Total: </label>
-              <TextField
-                InputProps={{
-                  readOnly: true
-                }}
-                name="total"
-                id="total"
-                type="number"
-                value={formik.values.total}
-              />
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>
+                  <Typography variant="h6">Total:</Typography>
+                  <TextField
+                    InputProps={{
+                      readOnly: true
+                    }}
+                    name="total"
+                    id="total"
+                    type="number"
+                    value={formik.values.total}
+                  />
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </TableContainer>

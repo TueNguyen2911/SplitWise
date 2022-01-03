@@ -161,13 +161,8 @@ const TopbarContainer = () => {
                   </IconButton>
                 ) : null}
 
-                <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-                  <Badge badgeContent={4} color="error">
-                    <MailIcon color="action" />
-                  </Badge>
-                </IconButton>
                 <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-                  <Badge badgeContent={17} color="error">
+                  <Badge badgeContent={0} color="error">
                     <NotificationsIcon color="action" />
                   </Badge>
                 </IconButton>

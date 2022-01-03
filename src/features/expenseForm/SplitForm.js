@@ -20,7 +20,7 @@ const SplitForm = ({ users, isBillForm, formik, handleFixedCheck, handleOwnedCha
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell></TableCell>
+                <TableCell>Member</TableCell>
                 <TableCell>Owned</TableCell>
                 <TableCell>Notes</TableCell>
               </TableRow>

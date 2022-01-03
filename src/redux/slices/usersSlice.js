@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { collection, query, where, getDocs, getDoc, doc } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-const initialState = { data: [{}], status: 'idle', error: null }
+const initialState = { data: [], status: 'idle', error: null }
 /**
  * @param {userId} array of users' id
  */

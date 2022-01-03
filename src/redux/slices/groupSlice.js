@@ -11,7 +11,7 @@ import {
   updateDoc
 } from 'firebase/firestore'
 import { db } from '../../firebase/config'
-const initialState = { data: [{}], status: 'idle', error: null, createStatus: 'idle' }
+const initialState = { data: [], status: 'idle', error: null, createStatus: 'idle' }
 
 export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, thunkAPI) => {
   try {

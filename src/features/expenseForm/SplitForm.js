@@ -12,7 +12,9 @@ import {
   Avatar
 } from '@mui/material'
 import { Formik, Form, useFormik, FieldArray } from 'formik'
-const SplitForm = ({ users, isBillForm, formik, handleFixedCheck, handleOwnedChange }) => {
+import { useSelector } from 'react-redux'
+const SplitForm = ({ isBillForm, formik, handleFixedCheck, handleOwnedChange }) => {
+  const users = useSelector((state) => state.users.data)
   if (isBillForm || formik.values.billImg) {
     return (
       <div className="split-form">

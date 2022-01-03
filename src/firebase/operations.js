@@ -61,3 +61,52 @@ export const addMember = async (user, groupId) => {
     return { msg: null, error: error.message }
   }
 }
+
+export const kickMember = async (user, groupId) => {
+  try {
+    const { currentUser, users, groups } = store.getState()
+    //update groupIds of the user
+    const { groupIds } = JSON.parse(JSON.stringify(user))
+    groupIds.splice(groupIds.indexOf(groupId), 1)
+    await updateDoc(doc(db, 'Users', user.id), { groupIds: groupIds })
+
+    //update memberIds of the group
+    const targetGroup = groups.data.filter((elem) => elem.id === groupId)[0]
+    console.log(groups.data)
+    const { memberIds } = JSON.parse(JSON.stringify(targetGroup))
+    memberIds.splice(memberIds.indexOf(user.id), 1)
+    console.log(memberIds)
+    await updateDoc(doc(db, 'Groups', groupId), { memberIds: memberIds })
+
+    //update members of expenseForm
+    const expenseFormIds = targetGroup.expenses.map((elem) => elem.expenseFormId)
+    const EFPromises = expenseFormIds.map((id) => {
+      return getDoc(doc(db, 'ExpenseForms', id))
+    })
+    const expenseForms = []
+    for (let i = 0; i < EFPromises.length; i++) {
+      const EFSnap = await EFPromises[i]
+      expenseForms.push(EFSnap.data())
+    }
+
+    for (let i = 0; i < expenseForms.length; i++) {
+      const index = expenseForms[i].members.reduce((prev, elem, index) => {
+        if (elem.id === user.id) {
+          return index
+        }
+      })
+      expenseForms[i].members.splice(index, 1)
+    }
+
+    for (let i = 0; i < expenseForms.length; i++) {
+      await updateDoc(doc(db, 'ExpenseForms', expenseForms[i].id), {
+        members: expenseForms[i].members
+      })
+    }
+    console.log(expenseForms)
+    return { msg: `Kicked ${user.userName} successfully from ${targetGroup.name}`, error: null }
+  } catch (error) {
+    console.error(error)
+    return { msg: null, error: error.message }
+  }
+}

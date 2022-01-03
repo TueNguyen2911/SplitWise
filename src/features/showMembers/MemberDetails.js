@@ -1,47 +1,50 @@
-import { Button, Divider, Menu, MenuItem } from '@mui/material'
+import { Avatar, Button, Divider, Menu, MenuItem, Popover, Box } from '@mui/material'
 import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { kickMember } from '../../firebase/operations'
 
-const MemberDetails = ({ userData }) => {
-  const [anchorEl, setAnchorEl] = useState(null)
+const MemberDetails = ({ users, id, anchorEl, handleMemberDetailsClose }) => {
   const isMenuOpen = Boolean(anchorEl)
-  const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget)
+  const poppedUser = users.data.filter((elem) => elem.id === id)[0]
+  const { groupId } = useParams()
+  const handleKick = () => {
+    console.log('Hi')
+    const kick = async () => {
+      const { msg, error } = await kickMember(poppedUser, groupId)
+      console.log(msg)
+    }
+    kick()
   }
-  const handleMenuClose = () => {
-    setAnchorEl(null)
+  if (id.length === 0 || !poppedUser) {
+    return null
   }
-  const renderMenu = (
-    <Menu
+
+  return (
+    <Popover
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: 'top',
-        horizontal: 'right'
+        horizontal: 'left'
       }}
+      id={poppedUser.id}
       keepMounted={false}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'right'
       }}
-      sx={{ transform: 'translateY(5%)' }}
       open={isMenuOpen}
-      onClose={handleMenuClose}
+      onClose={handleMemberDetailsClose}
     >
-      <MenuItem onClick={handleMenuClose}>{userData.userName}</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <Divider />
-      <MenuItem onClick={handleMenuClose}>Close</MenuItem>
-    </Menu>
-  )
-  return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        position: 'absolute',
-        right: '225px'
-      }}
-    >
-      {renderMenu}
-    </div>
+      <Box sx={{ display: 'flex', flexDirection: 'column', padding: '5px', gap: '10px' }}>
+        <Avatar src={poppedUser.avatar} sx={{ width: 56, height: 56 }} />
+        <span>{poppedUser.userName}</span>
+        <span>#{poppedUser.id}</span>
+        <span>Name: {poppedUser.name}</span>
+        <Button onClick={handleKick} fullWidth variant="outlined" color="error">
+          Kick {poppedUser.userName}
+        </Button>
+      </Box>
+    </Popover>
   )
 }
 

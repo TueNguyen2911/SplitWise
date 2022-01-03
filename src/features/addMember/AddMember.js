@@ -14,9 +14,8 @@ const AddMember = ({ userId, setUserId }) => {
     }
   }
   return (
-    <div className="AddMember" style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+    <div className="AddMember">
       <TextField label="user id" sx={{ width: '400px' }} onChange={(e) => handleUserIdChange(e)} />
-      <Button variant="contained">Add</Button>
     </div>
   )
 }

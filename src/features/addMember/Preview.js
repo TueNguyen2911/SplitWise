@@ -1,7 +1,7 @@
 import { getUserById } from '../../firebase/operations'
 import styled from 'styled-components'
 import React, { useEffect, useState } from 'react'
-import { Avatar, Paper } from '@mui/material'
+import { Avatar, Button, Paper } from '@mui/material'
 
 const AvatarLabel = styled.div`
   padding: 5px;
@@ -31,6 +31,9 @@ const Preview = ({ userId }) => {
           <AvatarLabel>
             <Avatar style={{ marginRight: '14px' }} src={user.avatar} />
             <span>{user.userName}</span>
+            <Button variant="outlined" sx={{ marginLeft: 'auto' }}>
+              Add
+            </Button>
           </AvatarLabel>
         </Paper>
       ) : null}

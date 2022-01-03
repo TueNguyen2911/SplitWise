@@ -14,6 +14,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import ImageIcon from '@mui/icons-material/Image'
 import PersonAdd from '@mui/icons-material/PersonAdd'
 import { styled } from '@mui/system'
+import { useDispatch, useSelector } from 'react-redux'
+import { saveAppState } from '../../redux/slices/appSlice'
 import React, { useState } from 'react'
 
 const MenuIconButton = styled(IconButton)(({ theme }) => ({
@@ -24,6 +26,7 @@ const MenuIconButton = styled(IconButton)(({ theme }) => ({
 }))
 
 const GroupMenu = () => {
+  const dispatch = useDispatch()
   const renderMenu = (
     <SpeedDial
       ariaLabel="SpeedDial openIcon example"
@@ -33,7 +36,11 @@ const GroupMenu = () => {
       <SpeedDialAction icon={<EditIcon />} tooltipTitle={'Change group name'} />
       <SpeedDialAction icon={<ImageIcon />} tooltipTitle={'Change group avatar'} />
       <SpeedDialAction icon={<NoteAddIcon />} tooltipTitle={'Create new expense '} />
-      <SpeedDialAction icon={<PersonAddIcon />} tooltipTitle={'Add new member'} />
+      <SpeedDialAction
+        onClick={() => dispatch(saveAppState({ addMember: true }))}
+        icon={<PersonAddIcon />}
+        tooltipTitle={'Add new member'}
+      />
     </SpeedDial>
   )
   return (

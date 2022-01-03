@@ -48,6 +48,7 @@ const ExpenseCard = () => {
           return elem
         }
       })[0]
+      console.log(currentGroup)
       setGroup(currentGroup)
       setExpenses(currentGroup.expenses)
     }

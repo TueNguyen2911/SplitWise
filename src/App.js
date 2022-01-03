@@ -18,7 +18,6 @@ import { auth } from './firebase/config'
 import { saveUserAuth } from './redux/slices/userAuthSlice'
 import { getUserById } from './redux/slices/currentUserSlice'
 import { getAllGroups } from './redux/slices/groupSlice'
-import { getUsersByIds } from './redux/slices/usersSlice'
 import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
@@ -28,6 +27,7 @@ function App() {
   const userAuth = useSelector((state) => state.userAuth)
   const currentUser = useSelector((state) => state.currentUser)
   const appState = useSelector((state) => state.app)
+  const groups = useSelector((state) => state.groups)
   const dispatch = useDispatch()
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -56,7 +56,7 @@ function App() {
 
   return (
     <div className="App">
-      {userAuth.status === 'succeeded' ? (
+      {groups.status === 'succeeded' ? (
         <>
           <Router>
             <RouteGuard components={[<SidebarContainer />]} />
@@ -72,7 +72,7 @@ function App() {
               </Route>
               <Route exact path="/group/:groupId">
                 <RouteGuard components={[<ExpenseCard />]} />
-                <RouteGuard components={[<ShowMembers />]} />
+                {appState.data.showMembers ? <ShowMembers /> : null}
               </Route>
               <Route exact path="/form">
                 <RouteGuard components={[<ExpenseForm />]} />

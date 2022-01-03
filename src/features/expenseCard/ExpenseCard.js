@@ -12,6 +12,7 @@ import ExpenseTab from '../expenseTab/ExpenseTab'
 import { saveAppState } from '../../redux/slices/appSlice'
 import GroupMenu from './GroupMenu'
 import AddMemberPaper from '../addMember/AddMemberPaper'
+import { getUsersByIds } from '../../redux/slices/usersSlice'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -38,7 +39,7 @@ const ExpenseCard = () => {
   const { groupId } = useParams()
   const { path, url } = useRouteMatch()
   const groups = useSelector((state) => state.groups.data)
-  const [group, setGroup] = useState([])
+  const [group, setGroup] = useState(null)
   const [expenses, setExpenses] = useState([])
   const dispatch = useDispatch()
   useEffect(() => {
@@ -48,7 +49,6 @@ const ExpenseCard = () => {
           return elem
         }
       })[0]
-      console.log(currentGroup)
       setGroup(currentGroup)
       setExpenses(currentGroup.expenses)
     }
@@ -59,36 +59,40 @@ const ExpenseCard = () => {
   }, [])
   return (
     <div className="ExpenseCard">
-      <Typography variant="h3" align="center">
-        {group.name}
-      </Typography>
-      <CardContainer>
-        {expenses ? (
-          expenses.map((elem, index) => (
-            <StyledCard
-              key={index}
-              onClick={() => history.push(`${url}/expense/${elem.expenseFormId}`)}
-            >
-              <Box>
-                <CardMedia
-                  component="img"
-                  sx={{ objectFit: 'cover' }}
-                  image={elem.image}
-                  alt="Expense Img"
-                />
-              </Box>
-              <Divider />
-              <CardContent sx={{ textAlign: 'left' }}>
-                {elem.name} <br /> {elem.date}
-              </CardContent>
-            </StyledCard>
-          ))
-        ) : (
-          <>Hmm it's empty</>
-        )}
-      </CardContainer>
-      <GroupMenu />
-      <AddMemberPaper />
+      {group ? (
+        <>
+          <Typography variant="h3" align="center">
+            {group.name}
+          </Typography>
+          <CardContainer>
+            {expenses ? (
+              expenses.map((elem, index) => (
+                <StyledCard
+                  key={index}
+                  onClick={() => history.push(`${url}/expense/${elem.expenseFormId}`)}
+                >
+                  <Box>
+                    <CardMedia
+                      component="img"
+                      sx={{ objectFit: 'cover' }}
+                      image={elem.image}
+                      alt="Expense Img"
+                    />
+                  </Box>
+                  <Divider />
+                  <CardContent sx={{ textAlign: 'left' }}>
+                    {elem.name} <br /> {elem.date}
+                  </CardContent>
+                </StyledCard>
+              ))
+            ) : (
+              <>Hmm it's empty</>
+            )}
+          </CardContainer>
+          <GroupMenu />
+          <AddMemberPaper />
+        </>
+      ) : null}
     </div>
   )
 }

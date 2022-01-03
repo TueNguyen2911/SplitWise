@@ -15,11 +15,10 @@ const AvatarLabel = styled.div`
   display: flex;
   align-items: center;
 `
-const MemberItem = ({ userData, handleProfileMenuOpen }) => {
+const MemberItem = ({ userData, handleMemberDetailsOpen }) => {
   return (
     <div className="MemberItem" style={{ padding: '5px', pointerEvents: 'cursor' }}>
-      <MemberDetails userData={userData} />
-      <AvatarContainer onClick={(e) => handleProfileMenuOpen(e, userData.id)}>
+      <AvatarContainer onClick={(e) => handleMemberDetailsOpen(e, userData.id)}>
         <AvatarLabel>
           <Avatar style={{ marginRight: '14px' }} src={userData.avatar} />
           <span>{userData.userName}</span>

@@ -15,12 +15,11 @@ const ShowMembers = () => {
 
   const [anchorEl, setAnchorEl] = useState(null)
   const [poppedId, setPoppedId] = useState('')
-  const isMenuOpen = Boolean(anchorEl)
-  const handleProfileMenuOpen = (event, id) => {
+  const handleMemberDetailsOpen = (event, id) => {
     setAnchorEl(event.currentTarget)
     setPoppedId(id)
   }
-  const handleMenuClose = () => {
+  const handleMemberDetailsClose = () => {
     setAnchorEl(null)
   }
   const dispatch = useDispatch()
@@ -31,38 +30,6 @@ const ShowMembers = () => {
       dispatch(getUsersByIds(memberIds))
     }
   }, [groups.status, groupId])
-
-  const RenderMenu = ({ users, id }) => {
-    const poppedUser = users.data.filter((elem) => elem.id === id)[0]
-    if (id.length === 0 || !poppedUser) return null
-    return (
-      <Popover
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left'
-        }}
-        id={poppedUser.id}
-        keepMounted={false}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right'
-        }}
-        open={isMenuOpen}
-        onClose={handleMenuClose}
-      >
-        <Box sx={{ display: 'flex', flexDirection: 'column', padding: '5px', gap: '10px' }}>
-          <Avatar src={poppedUser.avatar} sx={{ width: 56, height: 56 }} />
-          <span>{poppedUser.userName}</span>
-          <span>#{poppedUser.id}</span>
-          <span>Name: {poppedUser.name}</span>
-          <Button fullwidth variant="outlined" color="error">
-            Kick {poppedUser.userName}
-          </Button>
-        </Box>
-      </Popover>
-    )
-  }
 
   if (appState.data.showMembers && appState.data.membersIcon) {
     return (
@@ -81,11 +48,18 @@ const ShowMembers = () => {
           {users.status === 'succeeded'
             ? users.data.map((elem) => (
                 <>
-                  <MemberItem userData={elem} handleProfileMenuOpen={handleProfileMenuOpen} />
+                  <MemberItem userData={elem} handleMemberDetailsOpen={handleMemberDetailsOpen} />
                 </>
               ))
             : null}
-          {users.status === 'succeeded' ? <RenderMenu users={users} id={poppedId} /> : null}
+          {users.status === 'succeeded' ? (
+            <MemberDetails
+              users={users}
+              id={poppedId}
+              anchorEl={anchorEl}
+              handleMemberDetailsClose={handleMemberDetailsClose}
+            />
+          ) : null}
         </div>
       </div>
     )

@@ -373,7 +373,6 @@ const ExpenseForm = () => {
           />
           <br /> <br />
           <SplitForm
-            users={users.data}
             isBillForm={formik.values.isBillForm}
             formik={formik}
             handleFixedCheck={handleFixedCheck}

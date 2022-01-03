@@ -37,33 +37,35 @@ export default function GroupCard() {
     dispatch(saveAppState({ membersIcon: false }))
   }, [])
   return (
-    <CardContainer>
-      {status === 'succeeded' ? (
-        data.map((elem, index) => (
-          <StyledCard onClick={() => history.push(`/group/${elem.id}`)}>
-            <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
-              <CardMedia
-                component="img"
-                sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
-                image={elem.avatar}
-                alt="Live from space album cover"
-              />
-              <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
-                {elem.members.map((elem, index) => {
-                  if (index < 8) {
-                    return <Avatar alt={elem.name} src={elem.avatar} />
-                  }
-                  return null
-                })}
+    <div className="GroupCard">
+      <CardContainer>
+        {status === 'succeeded' ? (
+          data.map((elem, index) => (
+            <StyledCard onClick={() => history.push(`/group/${elem.id}`)}>
+              <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
+                <CardMedia
+                  component="img"
+                  sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
+                  image={elem.avatar}
+                  alt="Live from space album cover"
+                />
+                <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
+                  {elem.members.map((elem, index) => {
+                    if (index < 8) {
+                      return <Avatar alt={elem.name} src={elem.avatar} />
+                    }
+                    return null
+                  })}
+                </Box>
               </Box>
-            </Box>
-            <Divider />
-            <CardContent sx={{ textAlign: 'left' }}>{elem.name}</CardContent>
-          </StyledCard>
-        ))
-      ) : (
-        <>loading</>
-      )}
-    </CardContainer>
+              <Divider />
+              <CardContent sx={{ textAlign: 'left' }}>{elem.name}</CardContent>
+            </StyledCard>
+          ))
+        ) : (
+          <>loading</>
+        )}
+      </CardContainer>
+    </div>
   )
 }

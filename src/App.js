@@ -42,7 +42,6 @@ function App() {
   useEffect(() => {
     if (userAuth.status === 'succeeded' && userAuth.userId) {
       const unsub = onSnapshot(doc(db, 'Users', userAuth.userId), (doc) => {
-        console.log(doc.data())
         dispatch(getUserById())
       })
     }

@@ -289,18 +289,15 @@ const ExpenseForm = () => {
 
   useEffect(() => {
     if (expenseForm.status === 'succeeded') {
+      console.log(expenseForm)
       const memberIds = expenseForm.data.members.map((elem) => elem.id)
       if (users.status === 'idle') {
         dispatch(getUsersByIds(memberIds))
       }
       const expenseFormData = JSON.parse(JSON.stringify(expenseForm.data))
-      expenseFormData.billImg = ''
       formik.setValues({ ...formik.values, ...expenseFormData })
     }
   }, [expenseForm])
-  useEffect(() => {
-    console.log(formik.values)
-  })
   if (!formik.values || users.status !== 'succeeded' || expenseForm.status !== 'succeeded') {
     return null
   }

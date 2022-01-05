@@ -114,11 +114,12 @@ export const kickMember = async (user, groupId) => {
 
 export const createExpense = async (groupId, expense) => {
   try {
+    const modExpense = { ...expense }
     const groupSnap = await getDoc(doc(db, 'Groups', groupId))
     const groupData = groupSnap.data()
     const expenseForm = {
       id: uniqid(),
-      name: '',
+      name: modExpense.name,
       billDesc: [''],
       billPrice: [0],
       total: 0,
@@ -136,17 +137,17 @@ export const createExpense = async (groupId, expense) => {
       })
     })
     await setDoc(doc(db, 'ExpenseForms', expenseForm.id), expenseForm)
-    const fixedExpense = { ...expense }
-    fixedExpense.date = fixedExpense.date.toLocaleDateString()
-    fixedExpense.from = fixedExpense.from.toLocaleDateString()
-    fixedExpense.to = fixedExpense.to.toLocaleDateString()
-    fixedExpense.image =
-      'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/white.jpg?alt=media&token=5e4f3062-67b2-475b-adfb-aa05bc1a2c16'
-    fixedExpense.expenseFormId = expenseForm.id
-    groupData.expenses.push(fixedExpense)
+
+    modExpense.date = modExpense.date.toLocaleDateString()
+    modExpense.from = modExpense.from.toLocaleDateString()
+    modExpense.to = modExpense.to.toLocaleDateString()
+    modExpense.image =
+      'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/EF.png?alt=media&token=76e7dc30-a362-4539-b57a-5c9dc8a777f7'
+    modExpense.expenseFormId = expenseForm.id
+    groupData.expenses.push(modExpense)
     console.log(groupData)
     await updateDoc(doc(db, 'Groups', groupData.id), groupData)
-    return { msg: `Created ${fixedExpense.name} successfully`, error: null }
+    return { msg: `Created ${modExpense.name} successfully`, error: null }
   } catch (error) {
     console.error(error.message)
     return { data: null, error: error.message }

@@ -46,9 +46,13 @@ const ShowMembers = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
           {users.status === 'succeeded'
-            ? users.data.map((elem) => (
+            ? users.data.map((elem, index) => (
                 <>
-                  <MemberItem userData={elem} handleMemberDetailsOpen={handleMemberDetailsOpen} />
+                  <MemberItem
+                    key={index}
+                    userData={elem}
+                    handleMemberDetailsOpen={handleMemberDetailsOpen}
+                  />
                 </>
               ))
             : null}

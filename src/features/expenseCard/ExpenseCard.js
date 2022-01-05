@@ -13,6 +13,7 @@ import { saveAppState } from '../../redux/slices/appSlice'
 import GroupMenu from './GroupMenu'
 import AddMemberPaper from '../addMember/AddMemberPaper'
 import { getUsersByIds } from '../../redux/slices/usersSlice'
+import CreateExpense from '../createExpense/CreateExpense'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -38,21 +39,17 @@ const ExpenseCard = () => {
   const history = useHistory()
   const { groupId } = useParams()
   const { path, url } = useRouteMatch()
-  const groups = useSelector((state) => state.groups.data)
+  const groups = useSelector((state) => state.groups)
   const [group, setGroup] = useState(null)
   const [expenses, setExpenses] = useState([])
   const dispatch = useDispatch()
   useEffect(() => {
-    if (groupId && groups.length > 0) {
-      const currentGroup = groups.map((elem, idx) => {
-        if (elem.id === groupId) {
-          return elem
-        }
-      })[0]
+    if (groupId && groups.data.length > 0 && groups.status === 'succeeded') {
+      const currentGroup = groups.data.filter((elem) => elem.id === groupId)[0]
       setGroup(currentGroup)
       setExpenses(currentGroup.expenses)
     }
-  }, [groups, groupId])
+  }, [groups.data, groupId])
 
   useEffect(() => {
     dispatch(saveAppState({ membersIcon: true }))
@@ -65,7 +62,7 @@ const ExpenseCard = () => {
             {group.name}
           </Typography>
           <CardContainer>
-            {expenses ? (
+            {expenses.length > 0 ? (
               expenses.map((elem, index) => (
                 <StyledCard
                   key={index}
@@ -91,6 +88,7 @@ const ExpenseCard = () => {
           </CardContainer>
           <GroupMenu />
           <AddMemberPaper />
+          <CreateExpense />
         </>
       ) : null}
     </div>

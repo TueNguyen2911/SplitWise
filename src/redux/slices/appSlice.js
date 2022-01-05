@@ -4,11 +4,12 @@ import { db } from '../../firebase/config'
 
 const initialState = {
   data: {
+    createExpense: false,
     addMember: false,
     createGroup: false,
+    showMembers: false,
     topBarHeight: 0,
     sideBarWidth: 0,
-    showMembers: false,
     membersIcon: false
   },
   status: 'idle'

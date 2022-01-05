@@ -62,7 +62,7 @@ function App() {
             <RouteGuard components={[<SidebarContainer />]} />
             <MainContent
               className="main-content"
-              createGroup={appState.data.createGroup}
+              appState={appState.data}
               SBWidth={appState.data.sideBarWidth}
             >
               <RouteGuard components={[<TopbarContainer />]} />

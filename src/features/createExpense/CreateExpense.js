@@ -98,7 +98,6 @@ const CreateExpense = () => {
     onSubmit: () => {
       const create = async () => {
         const { msg, error } = await createExpense(groupId, CEForm.values)
-        console.log(msg)
       }
       create()
     }

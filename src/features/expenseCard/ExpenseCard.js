@@ -36,24 +36,27 @@ const CardContainer = styled('div')({
 })
 
 const ExpenseCard = () => {
-  const history = useHistory()
-  const { groupId } = useParams()
-  const { path, url } = useRouteMatch()
   const groups = useSelector((state) => state.groups)
   const [group, setGroup] = useState(null)
   const [expenses, setExpenses] = useState([])
+
+  const history = useHistory()
+  const { groupId } = useParams()
+  const { url } = useRouteMatch()
   const dispatch = useDispatch()
+
   useEffect(() => {
-    if (groupId && groups.data.length > 0 && groups.status === 'succeeded') {
+    if (groups.status === 'succeeded') {
       const currentGroup = groups.data.filter((elem) => elem.id === groupId)[0]
       setGroup(currentGroup)
       setExpenses(currentGroup.expenses)
     }
-  }, [groups.data, groupId])
+  }, [groups])
 
   useEffect(() => {
     dispatch(saveAppState({ membersIcon: true }))
   }, [])
+
   return (
     <div className="ExpenseCard">
       {group ? (
@@ -62,8 +65,8 @@ const ExpenseCard = () => {
             {group.name}
           </Typography>
           <CardContainer>
-            {expenses.length > 0 ? (
-              expenses.map((elem, index) => (
+            {group.expenses.length > 0 ? (
+              group.expenses.map((elem, index) => (
                 <StyledCard
                   key={index}
                   onClick={() => history.push(`${url}/expense/${elem.expenseFormId}`)}
@@ -71,7 +74,7 @@ const ExpenseCard = () => {
                   <Box>
                     <CardMedia
                       component="img"
-                      sx={{ objectFit: 'cover' }}
+                      sx={{ objectFit: 'contain', height: '150px' }}
                       image={elem.image}
                       alt="Expense Img"
                     />

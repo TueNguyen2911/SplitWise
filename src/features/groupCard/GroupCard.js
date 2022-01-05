@@ -1,14 +1,10 @@
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
-import Avatar from '@mui/material/Avatar'
-import Divider from '@mui/material/Divider'
-import React, { useEffect } from 'react'
-import { Box } from '@mui/material'
+import { Card, CardContent, CardMedia, Avatar, Divider, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { saveAppState } from '../../redux/slices/appSlice'
+import React, { useEffect } from 'react'
+
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
   width: '330px',
@@ -47,7 +43,7 @@ export default function GroupCard() {
                   component="img"
                   sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
                   image={elem.avatar}
-                  alt="Live from space album cover"
+                  alt="elem.name"
                 />
                 <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
                   {elem.members.map((elem, index) => {

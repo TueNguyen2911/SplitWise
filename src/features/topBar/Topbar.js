@@ -29,6 +29,7 @@ const TopbarContainer = () => {
   const topBarRef = useRef()
   const [anchorEl, setAnchorEl] = useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
+  const [isIdCopied, setIsIdCopied] = useState(false)
 
   const isMenuOpen = Boolean(anchorEl)
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
@@ -53,6 +54,10 @@ const TopbarContainer = () => {
     dispatch(logout())
     window.location.reload()
   }
+  const copyId = (e) => {
+    navigator.clipboard.writeText(e.target.innerText.substring(1)) //remove the hashtag symbol
+    setIsIdCopied(true)
+  }
   const menuId = 'top-bar-menu'
   const renderMenu = (
     <Menu
@@ -72,9 +77,9 @@ const TopbarContainer = () => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>{currentUser.data.userName}</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-      <Divider />
-      <MenuItem onClick={handleMenuClose}>Close</MenuItem>
+      <Tooltip title={isIdCopied ? `Copied ${currentUser.data.id}` : 'Copy id'}>
+        <MenuItem onClick={(e) => copyId(e)}>#{currentUser.data.id}</MenuItem>
+      </Tooltip>
     </Menu>
   )
 
@@ -128,6 +133,14 @@ const TopbarContainer = () => {
   useEffect(() => {
     dispatch(saveAppState({ topBarHeight: topBarRef.current.offsetHeight }))
   }, [])
+
+  useEffect(() => {
+    if (isIdCopied) {
+      setTimeout(() => {
+        setIsIdCopied(false)
+      }, 3000)
+    }
+  }, [isIdCopied])
   return (
     <div className="TopBar" ref={topBarRef}>
       <nav>

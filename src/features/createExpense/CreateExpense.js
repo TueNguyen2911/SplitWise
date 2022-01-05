@@ -12,10 +12,6 @@ import { Box } from '@mui/system'
 import CloseIcon from '@mui/icons-material/Close'
 import { useDispatch, useSelector } from 'react-redux'
 import { saveAppState } from '../../redux/slices/appSlice'
-import AdapterDateFns from '@mui/lab/AdapterDateFns'
-import LocalizationProvider from '@mui/lab/LocalizationProvider'
-import Stack from '@mui/material/Stack'
-import DesktopDateRangePicker from '@mui/lab/DesktopDateRangePicker'
 import * as yup from 'yup'
 import { Formik, Form, useFormik } from 'formik'
 // import DatePicker from '@mui/lab/DatePicker'
@@ -50,9 +46,8 @@ const Title = ({ initialValues, form }) => {
   )
 }
 const CreateExpense = () => {
-  const { groupId } = useParams()
-  const dispatch = useDispatch()
   const appState = useSelector((state) => state.app)
+  const { groupId } = useParams()
 
   const validationSchema = yup.object().shape({
     singleDay: yup.boolean(),
@@ -68,7 +63,7 @@ const CreateExpense = () => {
     }),
     to: yup.date().when('singleDay', {
       is: false,
-      then: yup.date().required('Start date is required'),
+      then: yup.date().required('From date is required'),
       otherwise: yup.date().nullable()
     }),
     name: yup.string().required('Expense Name is required')
@@ -98,10 +93,9 @@ const CreateExpense = () => {
     CEForm.setValues({ ...CEForm.values, [name]: newDate })
   }
   const CEForm = useFormik({
-    //createExpenseForm
     initialValues: initialValues,
     validationSchema: validationSchema,
-    onSubmit: (values) => {
+    onSubmit: () => {
       const create = async () => {
         const { msg, error } = await createExpense(groupId, CEForm.values)
         console.log(msg)
@@ -109,9 +103,7 @@ const CreateExpense = () => {
       create()
     }
   })
-  useEffect(() => {
-    console.log(CEForm.errors)
-  })
+
   return (
     <div className="CreateExpense">
       {appState.data.createExpense ? (

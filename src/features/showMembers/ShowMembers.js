@@ -8,13 +8,14 @@ import MemberDetails from './MemberDetails'
 import MemberItem from './MemberItem'
 
 const ShowMembers = () => {
+  const [anchorEl, setAnchorEl] = useState(null)
+  const [poppedId, setPoppedId] = useState('')
   const appState = useSelector((state) => state.app)
   const users = useSelector((state) => state.users)
   const groups = useSelector((state) => state.groups)
   const { groupId } = useParams()
 
-  const [anchorEl, setAnchorEl] = useState(null)
-  const [poppedId, setPoppedId] = useState('')
+  const dispatch = useDispatch()
   const handleMemberDetailsOpen = (event, id) => {
     setAnchorEl(event.currentTarget)
     setPoppedId(id)
@@ -22,28 +23,24 @@ const ShowMembers = () => {
   const handleMemberDetailsClose = () => {
     setAnchorEl(null)
   }
-  const dispatch = useDispatch()
+  const showMembersStyle = {
+    top: `${appState.data.topBarHeight}px`,
+    position: 'fixed',
+    minHeight: '94vh',
+    width: '220px',
+    backgroundColor: '#dedede',
+    right: anchorEl ? '17px' : '0px'
+  }
   useEffect(() => {
-    console.log(groupId)
     if (groups.status === 'succeeded' && groupId) {
       const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
       dispatch(getUsersByIds(memberIds))
     }
   }, [groups.status, groupId])
 
-  if (appState.data.showMembers && appState.data.membersIcon) {
+  if (appState.data.showMembers && users.status === 'succeeded') {
     return (
-      <div
-        className="ShowMembers"
-        style={{
-          top: `${appState.data.topBarHeight}px`,
-          position: 'fixed',
-          minHeight: '94vh',
-          width: '220px',
-          backgroundColor: '#dedede',
-          right: '0'
-        }}
-      >
+      <div className="ShowMembers" style={showMembersStyle}>
         <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '5px' }}>
           {users.status === 'succeeded'
             ? users.data.map((elem, index) => (

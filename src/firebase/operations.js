@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
+import { addDoc, doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { useSelector } from 'react-redux'
 import { db } from './config'
 import { store } from '../redux/store'
-
+import uniqid from 'uniqid'
 export const getUserById = async (userId) => {
   try {
     const docSnap = await getDoc(doc(db, 'Users', userId))
@@ -108,5 +108,46 @@ export const kickMember = async (user, groupId) => {
   } catch (error) {
     console.error(error)
     return { msg: null, error: error.message }
+  }
+}
+
+export const createExpense = async (groupId, expense) => {
+  try {
+    const groupSnap = await getDoc(doc(db, 'Groups', groupId))
+    const groupData = groupSnap.data()
+    const expenseForm = {
+      id: uniqid(),
+      name: '',
+      billDesc: [''],
+      billPrice: [0],
+      total: 0,
+      billImg: '',
+      billImgTotal: 0,
+      isBillForm: false,
+      members: []
+    }
+    groupData.memberIds.forEach((memberId, index) => {
+      expenseForm.members.push({
+        id: memberId,
+        owned: 0,
+        note: '',
+        fixed: false
+      })
+    })
+    await setDoc(doc(db, 'ExpenseForms', expenseForm.id), expenseForm)
+    const fixedExpense = { ...expense }
+    fixedExpense.date = fixedExpense.date.toLocaleDateString()
+    fixedExpense.from = fixedExpense.from.toLocaleDateString()
+    fixedExpense.to = fixedExpense.to.toLocaleDateString()
+    fixedExpense.image =
+      'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/white.jpg?alt=media&token=5e4f3062-67b2-475b-adfb-aa05bc1a2c16'
+    fixedExpense.expenseFormId = expenseForm.id
+    groupData.expenses.push(fixedExpense)
+    console.log(groupData)
+    await updateDoc(doc(db, 'Groups', groupData.id), groupData)
+    return { msg: `Created ${fixedExpense.name} successfully`, error: null }
+  } catch (error) {
+    console.error(error.message)
+    return { data: null, error: error.message }
   }
 }

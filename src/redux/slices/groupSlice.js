@@ -11,6 +11,7 @@ import {
   updateDoc
 } from 'firebase/firestore'
 import { db } from '../../firebase/config'
+import uniqid from 'uniqid'
 const initialState = { data: [], status: 'idle', error: null, createStatus: 'idle' }
 
 export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, thunkAPI) => {
@@ -20,6 +21,7 @@ export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, 
     const q = query(collection(db, 'Groups'), where('id', 'in', groupIds))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach((doc) => {
+      console.log(doc.data())
       groupData.push(Object(doc.data()))
     })
     //fetching members based on memberIds to add to state
@@ -38,12 +40,13 @@ export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, 
 export const createGroup = createAsyncThunk('groups/createGroup', async (arg, thunkAPI) => {
   try {
     const currentUser = thunkAPI.getState().currentUser.data
-    const groupObj = { ...arg, members: [], expenses: [] }
-    groupObj.memberIds.unshift(currentUser.id)
+    const groupObj = { ...arg, members: [], expenses: [], id: uniqid() }
+    groupObj.memberIds.unshift(currentUser.id) //add the owner of the group
     if (groupObj.avatar.length === 0) {
       groupObj.avatar =
         'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/Screenshot%202022-01-01%20212759.png?alt=media&token=e5175b8f-a207-4ae3-a514-66491d7e9a00'
     }
+
     const groupIds = JSON.parse(JSON.stringify(currentUser.groupIds))
     groupIds.push(groupObj.id)
 

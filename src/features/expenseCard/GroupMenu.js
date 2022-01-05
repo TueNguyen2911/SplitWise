@@ -35,7 +35,11 @@ const GroupMenu = () => {
     >
       <SpeedDialAction icon={<EditIcon />} tooltipTitle={'Change group name'} />
       <SpeedDialAction icon={<ImageIcon />} tooltipTitle={'Change group avatar'} />
-      <SpeedDialAction icon={<NoteAddIcon />} tooltipTitle={'Create new expense '} />
+      <SpeedDialAction
+        onClick={() => dispatch(saveAppState({ createExpense: true }))}
+        icon={<NoteAddIcon />}
+        tooltipTitle={'Create new expense '}
+      />
       <SpeedDialAction
         onClick={() => dispatch(saveAppState({ addMember: true }))}
         icon={<PersonAddIcon />}

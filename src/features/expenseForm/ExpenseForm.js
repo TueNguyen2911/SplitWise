@@ -30,7 +30,7 @@ const ExpenseForm = () => {
     total: yup.number(),
     billImg: yup.object()
   })
-  const intitalValues = {
+  const initialValues = {
     name: '',
     billDesc: [''],
     billPrice: [0],
@@ -60,7 +60,7 @@ const ExpenseForm = () => {
     ]
   }
   const formik = useFormik({
-    initialValues: intitalValues,
+    initialValues: initialValues,
     validationSchema: validationSchema,
     onSubmit: (values) => {
       alert(JSON.stringify(values, null, 2))

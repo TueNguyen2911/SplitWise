@@ -4,7 +4,7 @@ import React from 'react'
 const BillImgForm = ({ formik, handleBillImgTotalChange }) => {
   if (formik.values.billImg) {
     return (
-      <>
+      <div className="BillImgForm">
         <label>Total: </label>
         <TextField
           name="total"
@@ -13,7 +13,7 @@ const BillImgForm = ({ formik, handleBillImgTotalChange }) => {
           onChange={(e) => handleBillImgTotalChange(e)}
           value={formik.values.total}
         />
-      </>
+      </div>
     )
   } else {
     return null

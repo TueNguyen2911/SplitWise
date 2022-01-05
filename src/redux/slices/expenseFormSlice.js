@@ -19,6 +19,7 @@ export const updateExpenseForm = createAsyncThunk(
   'expenseForm/updateExpenseForm',
   async (updateObj, thunkAPI) => {
     try {
+      console.log(updateObj)
       const id = thunkAPI.getState().expenseForm.data.id
       await updateDoc(doc(db, 'ExpenseForms', id), updateObj)
       thunkAPI.dispatch(getExpenseFormById(id))

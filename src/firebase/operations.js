@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { addDoc, doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { useSelector } from 'react-redux'
-import { db } from './config'
+import { db, storage } from './config'
 import { store } from '../redux/store'
+import { uploadBytes, getDownloadURL, deleteObject, ref } from 'firebase/storage'
 import uniqid from 'uniqid'
 export const getUserById = async (userId) => {
   try {
@@ -149,5 +150,27 @@ export const createExpense = async (groupId, expense) => {
   } catch (error) {
     console.error(error.message)
     return { data: null, error: error.message }
+  }
+}
+
+export const uploadImgToStorage = async (imageFile) => {
+  try {
+    const name = uniqid('image-')
+    const storageRef = ref(storage, name)
+
+    const snapshot = await uploadBytes(storageRef, imageFile)
+    const url = await getDownloadURL(ref(storage, name))
+    return { url: url, name: name, error: null }
+  } catch (error) {
+    return { url: null, name: null, error: error.message }
+  }
+}
+
+export const deleteImgToStorage = async (name) => {
+  try {
+    await deleteObject(ref(storage, name))
+    return { msg: `Deleted ${name} successfully`, error: null }
+  } catch (error) {
+    return { url: null, error: error.message }
   }
 }

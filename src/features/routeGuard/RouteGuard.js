@@ -15,7 +15,7 @@ const RouteGuard = ({ path, components }) => {
           {userAuth.userId ? (
             <Redirect to="/" />
           ) : (
-            components.map((component) => <> {component} </>)
+            components.map((component, index) => <div key={index}> {component} </div>)
           )}
         </>
       )
@@ -24,7 +24,7 @@ const RouteGuard = ({ path, components }) => {
     return (
       <>
         {userAuth.userId ? (
-          components.map((component) => <> {component} </>)
+          components.map((component, index) => <div key={index}>{component} </div>)
         ) : (
           <Redirect to="/login" />
         )}

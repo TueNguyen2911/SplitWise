@@ -29,7 +29,7 @@ const BillForm = ({ isBillForm, formik, handleDescChange, handlePriceChange, edi
 
             <TableBody>
               {formik.values.billDesc.map((elem, index) => (
-                <TableRow>
+                <TableRow key={index}>
                   <TableCell>
                     <TextField
                       value={formik.values.billDesc[index]}

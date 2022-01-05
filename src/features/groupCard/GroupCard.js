@@ -41,7 +41,7 @@ export default function GroupCard() {
       <CardContainer>
         {status === 'succeeded' ? (
           data.map((elem, index) => (
-            <StyledCard onClick={() => history.push(`/group/${elem.id}`)}>
+            <StyledCard key={index} onClick={() => history.push(`/group/${elem.id}`)}>
               <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
                 <CardMedia
                   component="img"
@@ -52,7 +52,7 @@ export default function GroupCard() {
                 <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
                   {elem.members.map((elem, index) => {
                     if (index < 8) {
-                      return <Avatar alt={elem.name} src={elem.avatar} />
+                      return <Avatar key={index} alt={elem.name} src={elem.avatar} />
                     }
                     return null
                   })}

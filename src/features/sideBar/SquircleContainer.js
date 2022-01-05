@@ -140,9 +140,9 @@ const SquircleContainer = ({ setSBWidth, groups }) => {
           </DiscordTooltip>
 
           <DividerLi></DividerLi>
-          {groups.map((elem) => (
-            <DiscordTooltip title={elem.name} placement="right">
-              <SquircleLi onClick={() => history.push(`/group/${elem.id}`)}>
+          {groups.map((elem, index) => (
+            <DiscordTooltip key={index} title={elem.name} placement="right">
+              <SquircleLi key={index} onClick={() => history.push(`/group/${elem.id}`)}>
                 <GroupIconImg src={elem.avatar} />
               </SquircleLi>
             </DiscordTooltip>

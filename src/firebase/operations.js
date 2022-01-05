@@ -175,3 +175,24 @@ export const deleteImgToStorage = async (name) => {
     return { url: null, error: error.message }
   }
 }
+
+export const createGroup = async (groupValue) => {
+  try {
+    const { currentUser } = store.getState()
+    const groupObj = { ...groupValue, members: [], expenses: [], id: uniqid() }
+    groupObj.memberIds.unshift(currentUser.data.id) //add the owner of the group
+    if (groupObj.avatar.length === 0) {
+      groupObj.avatar =
+        'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/Screenshot%202022-01-01%20212759.png?alt=media&token=e5175b8f-a207-4ae3-a514-66491d7e9a00'
+    }
+
+    const groupIds = JSON.parse(JSON.stringify(currentUser.data.groupIds))
+    groupIds.push(groupObj.id)
+
+    await setDoc(doc(db, 'Groups', groupObj.id), groupObj)
+    await updateDoc(doc(db, 'Users', currentUser.data.id), { groupIds })
+    return { msg: `Created ${groupObj.name} successfully`, error: null }
+  } catch (error) {
+    return { msg: null, error: error.message }
+  }
+}

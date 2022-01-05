@@ -22,6 +22,7 @@ import { doc, getDoc, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
 import ShowMembers from './features/showMembers/ShowMembers'
+import AppMessage from './features/appMessage/AppMessage'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -58,6 +59,7 @@ function App() {
       {groups.status === 'succeeded' ? (
         <>
           <Router>
+            <AppMessage />
             <RouteGuard components={[<SidebarContainer />]} />
             <MainContent
               className="main-content"
@@ -91,9 +93,13 @@ function App() {
             </MainContent>
           </Router>
         </>
-      ) : userAuth.status === 'failed' ? (
+      ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
         <>
-          <MainContent SBWidth={appState.data.sideBarWidth}>
+          <MainContent
+            className="main-content"
+            appState={appState.data}
+            SBWidth={appState.data.sideBarWidth}
+          >
             <Login />
           </MainContent>
         </>

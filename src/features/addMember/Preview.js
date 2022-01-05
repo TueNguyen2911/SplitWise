@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Avatar, Button, Paper } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUsersByIds } from '../../redux/slices/usersSlice'
+import { saveAppState } from '../../redux/slices/appSlice'
 
 const AvatarLabel = styled.div`
   padding: 5px;
@@ -13,30 +14,48 @@ const AvatarLabel = styled.div`
 `
 
 const Preview = ({ userId, setUserId }) => {
+  const appState = useSelector((state) => state.app)
   const groups = useSelector((state) => state.groups)
-  const [user, setUser] = useState(null)
-  const [inGroup, setInGroup] = useState(false)
+  const [user, setUser] = useState(null) //user data found
+  const [inGroup, setInGroup] = useState(false) //check if user is already in group
   const { groupId } = useParams()
   const dispatch = useDispatch()
-  const handleAddClick = () => {
-    const add = async () => {
-      const { msg, error } = await addMember(user, groupId)
-      if (!error) {
-        setUserId('')
-        const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
-        dispatch(getUsersByIds(memberIds))
-      }
+  const handleAddClick = async () => {
+    const { msg, error } = await addMember(user, groupId)
+    const { successMsg, errorMsg } = JSON.parse(JSON.stringify(appState.data))
+    if (msg) {
+      successMsg.push(msg)
+      dispatch(saveAppState({ successMsg: successMsg }))
+      setUserId('')
+    } else {
+      errorMsg.push(error)
+      dispatch(saveAppState({ errorMsg: errorMsg }))
     }
-    add()
+    if (!error) {
+      setUserId('')
+      const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
+      dispatch(getUsersByIds(memberIds))
+    }
   }
   useEffect(() => {
     if (userId.length === 28) {
       const getUser = async () => {
         const { data, error } = await getUserById(userId)
-        if (data.groupIds.includes(groupId)) {
-          setInGroup(true)
+        if (!error && data) {
+          //check if user is not found doesn't error
+          if (data.groupIds.includes(groupId)) {
+            setInGroup(true)
+          }
+          setUser(data)
+        } else if (!error && !data) {
+          const { errorMsg } = JSON.parse(JSON.stringify(appState.data))
+          errorMsg.push(`Can find user with id ${userId}`)
+          dispatch(saveAppState({ errorMsg: errorMsg }))
+        } else if (error) {
+          const { errorMsg } = JSON.parse(JSON.stringify(appState.data))
+          errorMsg.push(errorMsg)
+          dispatch(saveAppState({ errorMsg: errorMsg }))
         }
-        setUser(data)
       }
       getUser()
     } else if (user !== null) {

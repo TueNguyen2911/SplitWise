@@ -16,6 +16,7 @@ import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from '../../firebase/config'
 import { saveAppState } from '../../redux/slices/appSlice'
 import ShowMembers from '../showMembers/ShowMembers'
+import { deleteImgToStorage, uploadImgToStorage } from '../../firebase/operations'
 
 const ExpenseForm = () => {
   const uploadBillImgRef = useRef()
@@ -23,12 +24,12 @@ const ExpenseForm = () => {
   const expenseForm = useSelector((state) => state.expenseForm)
   const users = useSelector((state) => state.users)
   const dispatch = useDispatch()
-
+  let imgStorageName = ''
   const validationSchema = yup.object().shape({
     billDesc: yup.array().of(yup.string()),
     billPrice: yup.array().of(yup.number()),
     total: yup.number(),
-    billImg: yup.object()
+    billImg: yup.string()
   })
   const initialValues = {
     name: '',
@@ -89,22 +90,25 @@ const ExpenseForm = () => {
   const clickUploadBill = () => {
     uploadBillImgRef.current.click()
   }
-  const setImgValue = (e) => {
+  const setImgValue = async (e) => {
     const newMembers = [...formik.values.members]
     const average = formik.values.billImgTotal / newMembers.length
     newMembers.map((elem, index) => {
       elem.owned = average
     })
+    const { url, name, error } = await uploadImgToStorage(e.target.files[0])
+    imgStorageName = name
     formik.setValues({
       ...formik.values,
-      billImg: e.target.files[0],
+      billImg: url,
       members: newMembers,
       total: formik.values.billImgTotal
     })
   }
-  const removeBillImg = () => {
+  const removeBillImg = async () => {
     uploadBillImgRef.current.value = null
-    formik.setValues({ ...formik.values, billImg: null, total: 0 })
+    const { msg, error } = await deleteImgToStorage(imgStorageName)
+    formik.setValues({ ...formik.values, billImg: '', total: 0 })
   }
   const handleDescChange = (e, index) => {
     const billDescArr = [...formik.values.billDesc]
@@ -273,7 +277,7 @@ const ExpenseForm = () => {
     dispatch(updateExpenseForm(formik.values))
   }
   useEffect(() => {
-    if (formik.values.billImg) {
+    if (formik.values.billImg.length > 0) {
       formik.setValues({ ...formik.values, billImgTotal: formik.values.total })
     }
   }, [formik.values.total])
@@ -290,11 +294,13 @@ const ExpenseForm = () => {
         dispatch(getUsersByIds(memberIds))
       }
       const expenseFormData = JSON.parse(JSON.stringify(expenseForm.data))
-      expenseFormData.billImg = null
+      expenseFormData.billImg = ''
       formik.setValues({ ...formik.values, ...expenseFormData })
     }
   }, [expenseForm])
-
+  useEffect(() => {
+    console.log(formik.values)
+  })
   if (!formik.values || users.status !== 'succeeded' || expenseForm.status !== 'succeeded') {
     return null
   }
@@ -305,7 +311,11 @@ const ExpenseForm = () => {
       </Typography>
       <Formik onSubmit={formik.handleSubmit}>
         <Form>
-          <Preview file={formik.values.billImg} removeBillImg={removeBillImg} />
+          <Preview url={formik.values.billImg} removeBillImg={removeBillImg} />
+          <BillImgForm
+            handleBillImgTotalChange={handleBillImgTotalChange}
+            formik={formik}
+          /> <br /> <br />
           <Tooltip
             title={
               formik.values.isBillForm
@@ -322,7 +332,9 @@ const ExpenseForm = () => {
                 variant="contained"
                 onClick={clickUploadBill}
               >
-                {formik.values.billImg ? 'Changed the bill image' : 'Upload the bill image'}
+                {formik.values.billImg.length > 0
+                  ? 'Changed the bill image'
+                  : 'Upload the bill image'}
               </Button>
               <input
                 name="billImg"
@@ -334,11 +346,10 @@ const ExpenseForm = () => {
                 style={{ display: 'none' }}
               />
             </span>
-          </Tooltip>{' '}
-          <BillImgForm handleBillImgTotalChange={handleBillImgTotalChange} formik={formik} />{' '}
+          </Tooltip>
           <Tooltip
             title={
-              formik.values.billImg
+              formik.values.billImg.length > 0
                 ? 'Only the bill image or the bill form'
                 : 'Open a form table to enter bill details'
             }
@@ -346,7 +357,7 @@ const ExpenseForm = () => {
           >
             <span>
               <Button
-                disabled={formik.values.billImg != null}
+                disabled={formik.values.billImg.length > 0}
                 color="primary"
                 variant="contained"
                 onClick={toggleBillForm}

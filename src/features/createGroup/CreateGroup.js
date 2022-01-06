@@ -72,7 +72,7 @@ const CreateGroup = () => {
         sx={{
           position: 'absolute',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
+          transform: 'translate(-50%, 25%)',
           pointerEvents: 'auto',
           padding: '40px'
         }}

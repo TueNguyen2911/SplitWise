@@ -6,10 +6,10 @@ import { Typography, Box, Paper } from '@mui/material'
 import { useSelector } from 'react-redux'
 import Login from '../login/Login'
 import SignUp from '../signUp/SignUp'
-const Slideshow = () => {
+const Landing = () => {
   const { login } = useSelector((state) => state.app.data)
   return (
-    <div className="SlideShow">
+    <div className="Landing">
       <Box className="landing-row-flex-container">
         {login ? <Login /> : <SignUp />}
         <img
@@ -23,4 +23,4 @@ const Slideshow = () => {
   )
 }
 
-export default Slideshow
+export default Landing

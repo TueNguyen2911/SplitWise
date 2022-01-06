@@ -145,11 +145,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 3px;
 }
 
 /* Landing */
-.SlideShow {
+.SWLogo {
+  height: 80px;
+}
+.Landing {
   background-color: #013a6b;
   background-image: -webkit-linear-gradient(30deg, #013a6b 50%, #2484dd 50%);
 }

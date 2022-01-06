@@ -24,7 +24,7 @@ import CreateGroup from './features/createGroup/CreateGroup'
 import ShowMembers from './features/showMembers/ShowMembers'
 import AppMessage from './features/appMessage/AppMessage'
 import SignUp from './features/signUp/SignUp'
-import Slideshow from './features/landingPage/SlideImages'
+import Landing from './features/landingPage/Landing'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -48,17 +48,17 @@ function App() {
         dispatch(getUserById())
       })
     }
-  }, [userAuth.status])
+  }, [userAuth])
 
   useEffect(() => {
     if (currentUser.status === 'succeeded') {
       dispatch(getAllGroups())
     }
-  }, [currentUser.status])
+  }, [currentUser])
 
   return (
     <div className="App">
-      {groups.status === 'succeeded' ? (
+      {groups.status === 'succeeded' && userAuth.userId ? (
         <>
           <Router>
             <AppMessage />
@@ -95,14 +95,9 @@ function App() {
             </MainContent>
           </Router>
         </>
-      ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
+      ) : !userAuth.userId ? (
         <>
-          {/* <Route path="/login">
-              <Login />
-            </Route> */}
-          {/* <Route path="/signup"> */}
-          <Slideshow />
-          {/* </Route> */}
+          <Landing />
         </>
       ) : null}
     </div>

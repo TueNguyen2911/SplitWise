@@ -1,10 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { addDoc, doc, getDoc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { useSelector } from 'react-redux'
-import { db, storage } from './config'
+import { auth, db, storage } from './config'
 import { store } from '../redux/store'
 import { uploadBytes, getDownloadURL, deleteObject, ref } from 'firebase/storage'
 import uniqid from 'uniqid'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 export const getUserById = async (userId) => {
   try {
     const docSnap = await getDoc(doc(db, 'Users', userId))
@@ -210,5 +211,35 @@ export const getMemeImages = async (limit = 8) => {
     return { urls: urls, error: null }
   } catch (error) {
     return { urls: [], error: error.message }
+  }
+}
+export const createUser = async (userValues) => {
+  try {
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      userValues.email,
+      userValues.password
+    )
+    const { msg, error } = await addUserToFireStore(userValues, user.uid)
+    console.log(msg, error)
+    return { msg: msg, error: null }
+  } catch (error) {
+    return { user: null, error: error.message }
+  }
+}
+const addUserToFireStore = async (userValues, userId) => {
+  try {
+    const user = {
+      id: userId,
+      avatar: userValues.avatar,
+      email: userValues.email,
+      groupIds: [],
+      name: userValues.name,
+      userName: userValues.userName
+    }
+    await setDoc(doc(db, 'Users', user.id), user)
+    return { msg: `Created user ${user.userName}`, error: null }
+  } catch (error) {
+    return { msg: null, error: error.message }
   }
 }

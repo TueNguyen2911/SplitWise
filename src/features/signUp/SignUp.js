@@ -12,7 +12,7 @@ import { updateExpenseForm } from '../../redux/slices/expenseFormSlice'
 import { useSelector } from 'react-redux'
 import { saveAppState } from '../../redux/slices/appSlice'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
-import { createGroup, uploadImgToStorage } from '../../firebase/operations'
+import { createGroup, createUser, uploadImgToStorage } from '../../firebase/operations'
 
 const SignUp = () => {
   const dispatch = useDispatch()
@@ -21,12 +21,20 @@ const SignUp = () => {
   const [imgFile, setImgFile] = useState(null)
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
-    userName: yup.string().required('Username is required'),
+    userName: yup.string().max(15).required('Username is required'),
     email: yup
       .string('Enter your email')
       .email('Enter a valid email')
       .required('Email is required'),
-    avatar: yup.string()
+    avatar: yup.string(),
+    password: yup.string().min(8).required('Password is needed'),
+    confirmPassword: yup
+      .string()
+      .required('Confirm password is required')
+      .when('password', {
+        is: (val) => (val && val.length > 0 ? true : false),
+        then: yup.string().oneOf([yup.ref('password')], 'Both password need to be the same')
+      })
   })
   const signUpForm = useFormik({
     initialValues: {
@@ -34,10 +42,15 @@ const SignUp = () => {
       userName: '',
       email: '',
       avatar:
-        'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/default-avatar.png?alt=media&token=04c9d72c-c171-4717-9b13-94733eba3c86'
+        'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/default-avatar.png?alt=media&token=04c9d72c-c171-4717-9b13-94733eba3c86',
+      password: '',
+      confirmPassword: ''
     },
     validationSchema: validationSchema,
-    onSubmit: async () => {}
+    onSubmit: async () => {
+      const { msg, error } = await createUser(signUpForm.values)
+      console.log(msg, error)
+    }
   })
   const inputImgRef = useRef()
 
@@ -50,9 +63,17 @@ const SignUp = () => {
   return (
     <div className="SignUp">
       <Paper elevation={10} className="login-signup-paper">
-        <img alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
+        <img className="SWLogo" alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
         <Formik>
-          <Form style={{ width: '70%' }} onSubmit={signUpForm.handleSubmit}>
+          <Form
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              width: '70%',
+              justifyContent: 'center'
+            }}
+            onSubmit={signUpForm.handleSubmit}
+          >
             <TextField
               fullWidth
               type="text"
@@ -63,7 +84,7 @@ const SignUp = () => {
               error={signUpForm.errors.name && Boolean(signUpForm.touched.name)}
               helperText={signUpForm.touched.name && signUpForm.errors.name}
             />
-            <br /> <br />
+            <br />
             <TextField
               fullWidth
               type="text"
@@ -74,7 +95,7 @@ const SignUp = () => {
               error={signUpForm.errors.userName && Boolean(signUpForm.touched.userName)}
               helperText={signUpForm.touched.userName && signUpForm.errors.userName}
             />
-            <br /> <br />
+            <br />
             <TextField
               fullWidth
               type="email"
@@ -85,7 +106,31 @@ const SignUp = () => {
               error={signUpForm.errors.email && Boolean(signUpForm.touched.email)}
               helperText={signUpForm.touched.email && signUpForm.errors.email}
             />
-            <br /> <br />
+            <br />
+            <TextField
+              fullWidth
+              type="password"
+              name="password"
+              value={signUpForm.values.password}
+              onChange={signUpForm.handleChange}
+              label="Password"
+              error={signUpForm.errors.password && Boolean(signUpForm.touched.password)}
+              helperText={signUpForm.touched.password && signUpForm.errors.password}
+            />
+            <br />
+            <TextField
+              fullWidth
+              type="password"
+              name="confirmPassword"
+              value={signUpForm.values.confirmPassword}
+              onChange={signUpForm.handleChange}
+              label="Confirm Password"
+              error={
+                signUpForm.errors.confirmPassword && Boolean(signUpForm.touched.confirmPassword)
+              }
+              helperText={signUpForm.touched.confirmPassword && signUpForm.errors.confirmPassword}
+            />
+            <br />
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
               <Button
                 onClick={() => inputImgRef.current.click()}

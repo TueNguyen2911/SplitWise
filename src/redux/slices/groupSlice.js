@@ -7,22 +7,25 @@ const initialState = { data: [], status: 'idle', error: null, createStatus: 'idl
 export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, thunkAPI) => {
   try {
     const groupIds = thunkAPI.getState().currentUser.data.groupIds
-    let groupData = []
-    const q = query(collection(db, 'Groups'), where('id', 'in', groupIds))
-    const querySnapshot = await getDocs(q)
-    querySnapshot.forEach((doc) => {
-      console.log(doc.data())
-      groupData.push(Object(doc.data()))
-    })
-    //fetching members based on memberIds to add to state
-    for (const data of groupData) {
-      const userQuery = query(collection(db, 'Users'), where('id', 'in', data.memberIds))
-      const querySnapshot = await getDocs(userQuery)
+    if (groupIds.length > 0) {
+      let groupData = []
+      const q = query(collection(db, 'Groups'), where('id', 'in', groupIds))
+      const querySnapshot = await getDocs(q)
       querySnapshot.forEach((doc) => {
-        data.members.push(doc.data())
+        console.log(doc.data())
+        groupData.push(Object(doc.data()))
       })
+      //fetching members based on memberIds to add to state
+      for (const data of groupData) {
+        const userQuery = query(collection(db, 'Users'), where('id', 'in', data.memberIds))
+        const querySnapshot = await getDocs(userQuery)
+        querySnapshot.forEach((doc) => {
+          data.members.push(doc.data())
+        })
+      }
+      return groupData
     }
-    return groupData
+    return []
   } catch (error) {
     return thunkAPI.rejectWithValue(error.message)
   }

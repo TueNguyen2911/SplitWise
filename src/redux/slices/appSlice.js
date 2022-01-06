@@ -4,6 +4,8 @@ import { db } from '../../firebase/config'
 
 const initialState = {
   data: {
+    successMsg: [],
+    errorMsg: [],
     createExpense: false,
     addMember: false,
     createGroup: false,

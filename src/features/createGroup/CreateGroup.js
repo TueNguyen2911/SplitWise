@@ -10,8 +10,8 @@ import { Paper } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { updateExpenseForm } from '../../redux/slices/expenseFormSlice'
 import { useSelector } from 'react-redux'
-import { createGroup } from '../../redux/slices/groupSlice'
 import { saveAppState } from '../../redux/slices/appSlice'
+import { createGroup, uploadImgToStorage } from '../../firebase/operations'
 const StyledCard = styled(Card)(({ theme }) => ({
   width: '330px',
   boxShadow: '1px 1px 2px',
@@ -26,6 +26,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const CreateGroup = () => {
   const dispatch = useDispatch()
   const groups = useSelector((state) => state.groups)
+  const appState = useSelector((state) => state.app)
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
     avatar: yup.string()
@@ -38,8 +39,17 @@ const CreateGroup = () => {
       memberIds: []
     },
     validationSchema: validationSchema,
-    onSubmit: () => {
-      dispatch(createGroup(createGroupForm.values))
+    onSubmit: async () => {
+      const { successMsg, errorMsg } = JSON.parse(JSON.stringify(appState.data))
+      const { msg, error } = await createGroup(createGroupForm.values)
+      if (msg) {
+        successMsg.push(msg)
+        dispatch(saveAppState({ successMsg: successMsg }))
+        dispatch(saveAppState({ createGroup: false }))
+      } else {
+        errorMsg.push(error)
+        dispatch(saveAppState({ errorMsg: errorMsg }))
+      }
     }
   })
   useEffect(() => {
@@ -49,18 +59,11 @@ const CreateGroup = () => {
     }
   }, [groups.createStatus])
   const inputImgRef = useRef()
-  const uploadImgToStorage = (e) => {
-    const storage = getStorage()
-    const name = uniqid('group-avatar-')
-    const storageRef = ref(storage, name)
 
-    // 'file' comes from the Blob or File API
-    uploadBytes(storageRef, e.target.files[0]).then((snapshot) => {
-      getDownloadURL(ref(storage, name)).then((url) => {
-        console.log(url)
-        createGroupForm.setValues({ ...createGroupForm.values, avatar: String(url) })
-      })
-    })
+  const setAvatar = async (e) => {
+    const { url, error } = await uploadImgToStorage(e.target.files[0])
+    console.log(url)
+    createGroupForm.setValues({ ...createGroupForm.values, avatar: String(url) })
   }
   return (
     <div className="add-group">
@@ -103,7 +106,7 @@ const CreateGroup = () => {
                 type="file"
                 accept="image/*"
                 style={{ display: 'none' }}
-                onChange={(e) => uploadImgToStorage(e)}
+                onChange={(e) => setAvatar(e)}
               />
             </div>
             <Preview url={createGroupForm.values.avatar} />

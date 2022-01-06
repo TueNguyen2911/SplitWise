@@ -47,6 +47,7 @@ const Title = ({ initialValues, form }) => {
 }
 const CreateExpense = () => {
   const appState = useSelector((state) => state.app)
+  const dispatch = useDispatch()
   const { groupId } = useParams()
 
   const validationSchema = yup.object().shape({
@@ -95,11 +96,17 @@ const CreateExpense = () => {
   const CEForm = useFormik({
     initialValues: initialValues,
     validationSchema: validationSchema,
-    onSubmit: () => {
-      const create = async () => {
-        const { msg, error } = await createExpense(groupId, CEForm.values)
+    onSubmit: async () => {
+      const { successMsg, errorMsg } = JSON.parse(JSON.stringify(appState.data))
+      const { msg, error } = await createExpense(groupId, CEForm.values)
+      if (msg) {
+        successMsg.push(msg)
+        dispatch(saveAppState({ successMsg: successMsg }))
+        dispatch(saveAppState({ createExpense: false }))
+      } else {
+        errorMsg.push(error)
+        dispatch(saveAppState({ errorMsg: errorMsg }))
       }
-      create()
     }
   })
 

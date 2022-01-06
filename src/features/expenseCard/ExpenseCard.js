@@ -51,7 +51,7 @@ const ExpenseCard = () => {
       setGroup(currentGroup)
       setExpenses(currentGroup.expenses)
     }
-  }, [groups])
+  }, [groups, groupId])
 
   useEffect(() => {
     dispatch(saveAppState({ membersIcon: true }))

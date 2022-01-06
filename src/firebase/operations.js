@@ -26,10 +26,8 @@ export const addMember = async (user, groupId) => {
 
     //update memberIds of the group
     const targetGroup = groups.data.filter((elem) => elem.id === groupId)[0]
-    console.log(groups.data)
     const { memberIds } = JSON.parse(JSON.stringify(targetGroup))
     memberIds.push(user.id)
-    console.log(memberIds)
     await updateDoc(doc(db, 'Groups', groupId), { memberIds: memberIds })
 
     //update members of expenseForm
@@ -51,7 +49,6 @@ export const addMember = async (user, groupId) => {
         owned: 0
       })
     }
-    console.log(expenseForms)
     for (let i = 0; i < expenseForms.length; i++) {
       await updateDoc(doc(db, 'ExpenseForms', expenseForms[i].id), {
         members: expenseForms[i].members
@@ -74,10 +71,8 @@ export const kickMember = async (user, groupId) => {
 
     //update memberIds of the group
     const targetGroup = groups.data.filter((elem) => elem.id === groupId)[0]
-    console.log(groups.data)
     const { memberIds } = JSON.parse(JSON.stringify(targetGroup))
     memberIds.splice(memberIds.indexOf(user.id), 1)
-    console.log(memberIds)
     await updateDoc(doc(db, 'Groups', groupId), { memberIds: memberIds })
 
     //update members of expenseForm
@@ -105,7 +100,6 @@ export const kickMember = async (user, groupId) => {
         members: expenseForms[i].members
       })
     }
-    console.log(expenseForms)
     return { msg: `Kicked ${user.userName} successfully from ${targetGroup.name}`, error: null }
   } catch (error) {
     console.error(error)
@@ -146,7 +140,6 @@ export const createExpense = async (groupId, expense) => {
       'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/EF.png?alt=media&token=76e7dc30-a362-4539-b57a-5c9dc8a777f7'
     modExpense.expenseFormId = expenseForm.id
     groupData.expenses.push(modExpense)
-    console.log(groupData)
     await updateDoc(doc(db, 'Groups', groupData.id), groupData)
     return { msg: `Created ${modExpense.name} successfully`, error: null }
   } catch (error) {
@@ -205,7 +198,6 @@ export const getMemeImages = async (limit = 8) => {
     for (let i = 1; i <= limit; i++) {
       name = `gs://splitwise-83ca0.appspot.com/meme${i}.jpg`
       const url = await getDownloadURL(ref(storage, name))
-      console.log(url)
       urls.push(url)
     }
     return { urls: urls, error: null }
@@ -221,7 +213,6 @@ export const createUser = async (userValues) => {
       userValues.password
     )
     const { msg, error } = await addUserToFireStore(userValues, user.uid)
-    console.log(msg, error)
     return { msg: msg, error: null }
   } catch (error) {
     return { user: null, error: error.message }

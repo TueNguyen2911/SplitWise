@@ -3,7 +3,6 @@ import React from 'react'
 const AddMember = ({ userId, setUserId }) => {
   const handleUserIdChange = (e) => {
     const value = String(e.target.value).trim()
-    console.log(value)
     setUserId(value)
   }
   return (

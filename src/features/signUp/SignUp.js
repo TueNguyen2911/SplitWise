@@ -49,7 +49,6 @@ const SignUp = () => {
     validationSchema: validationSchema,
     onSubmit: async () => {
       const { msg, error } = await createUser(signUpForm.values)
-      console.log(msg, error)
     }
   })
   const inputImgRef = useRef()

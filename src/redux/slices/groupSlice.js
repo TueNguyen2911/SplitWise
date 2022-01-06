@@ -12,7 +12,6 @@ export const getAllGroups = createAsyncThunk('groups/getAllGroups', async (arg, 
       const q = query(collection(db, 'Groups'), where('id', 'in', groupIds))
       const querySnapshot = await getDocs(q)
       querySnapshot.forEach((doc) => {
-        console.log(doc.data())
         groupData.push(Object(doc.data()))
       })
       //fetching members based on memberIds to add to state

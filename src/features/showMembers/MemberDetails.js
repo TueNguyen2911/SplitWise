@@ -12,7 +12,6 @@ const MemberDetails = ({ users, id, anchorEl, handleMemberDetailsClose }) => {
   const { groupId } = useParams()
   const dispatch = useDispatch()
   const handleKick = () => {
-    console.log('Hi')
     const kick = async () => {
       const { successMsg, errorMsg } = JSON.parse(JSON.stringify(appState.data))
       const { msg, error } = await kickMember(poppedUser, groupId)

@@ -111,15 +111,15 @@ const CreateExpense = () => {
   })
 
   return (
-    <div className="CreateExpense">
+    <div
+      className="CreateExpense"
+      style={{ position: 'absolute', top: '50px', left: '35%', transform: 'translate(0, 25%)' }}
+    >
       {appState.data.createExpense ? (
         <>
           <Paper
             elevation={24}
             sx={{
-              position: 'absolute',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
               pointerEvents: 'auto',
               padding: '10px 50px 50px 50px'
             }}

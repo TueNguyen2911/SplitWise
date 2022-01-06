@@ -289,7 +289,6 @@ const ExpenseForm = () => {
 
   useEffect(() => {
     if (expenseForm.status === 'succeeded') {
-      console.log(expenseForm)
       const memberIds = expenseForm.data.members.map((elem) => elem.id)
       if (users.status === 'idle') {
         dispatch(getUsersByIds(memberIds))

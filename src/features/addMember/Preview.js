@@ -59,7 +59,6 @@ const Preview = ({ userId, setUserId }) => {
       }
       getUser()
     } else if (user !== null) {
-      console.log('yo')
       setUser(null)
       setInGroup(false)
     }

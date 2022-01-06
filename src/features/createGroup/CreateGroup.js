@@ -62,7 +62,6 @@ const CreateGroup = () => {
 
   const setAvatar = async (e) => {
     const { url, error } = await uploadImgToStorage(e.target.files[0])
-    console.log(url)
     createGroupForm.setValues({ ...createGroupForm.values, avatar: String(url) })
   }
   return (

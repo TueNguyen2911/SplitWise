@@ -1,6 +1,6 @@
 import { Card, CardContent, CardMedia, Avatar, Divider, Box } from '@mui/material'
 import { styled } from '@mui/system'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { saveAppState } from '../../redux/slices/appSlice'
 import React, { useEffect } from 'react'
@@ -29,6 +29,7 @@ export default function GroupCard() {
   const { data, status } = useSelector((state) => state.groups)
   const dispatch = useDispatch()
   const history = useHistory()
+  const { groupId } = useParams()
   useEffect(() => {
     dispatch(saveAppState({ membersIcon: false }))
   }, [])

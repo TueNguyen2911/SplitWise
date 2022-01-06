@@ -23,6 +23,8 @@ import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
 import ShowMembers from './features/showMembers/ShowMembers'
 import AppMessage from './features/appMessage/AppMessage'
+import SignUp from './features/signUp/SignUp'
+import Landing from './features/landingPage/Landing'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -46,17 +48,17 @@ function App() {
         dispatch(getUserById())
       })
     }
-  }, [userAuth.status])
+  }, [userAuth])
 
   useEffect(() => {
     if (currentUser.status === 'succeeded') {
       dispatch(getAllGroups())
     }
-  }, [currentUser.status])
+  }, [currentUser])
 
   return (
     <div className="App">
-      {groups.status === 'succeeded' ? (
+      {groups.status === 'succeeded' && userAuth.userId ? (
         <>
           <Router>
             <AppMessage />
@@ -93,15 +95,9 @@ function App() {
             </MainContent>
           </Router>
         </>
-      ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
+      ) : !userAuth.userId ? (
         <>
-          <MainContent
-            className="main-content"
-            appState={appState.data}
-            SBWidth={appState.data.sideBarWidth}
-          >
-            <Login />
-          </MainContent>
+          <Landing />
         </>
       ) : null}
     </div>

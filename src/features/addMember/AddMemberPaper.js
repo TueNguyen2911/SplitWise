@@ -31,14 +31,14 @@ const AddMemberPaper = () => {
   const appState = useSelector((state) => state.app)
   const [userId, setUserId] = useState('')
   return (
-    <div className="AddMemberPaper">
+    <div
+      className="AddMemberPaper"
+      style={{ position: 'absolute', top: '50px', left: '35%', transform: 'translate(0, 25%)' }}
+    >
       {appState.data.addMember ? (
         <Paper
           elevation={24}
           sx={{
-            position: 'absolute',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
             pointerEvents: 'auto',
             padding: '10px 50px 50px 50px'
           }}

@@ -66,13 +66,13 @@ const CreateGroup = () => {
     createGroupForm.setValues({ ...createGroupForm.values, avatar: String(url) })
   }
   return (
-    <div className="add-group">
+    <div
+      className="add-group"
+      style={{ position: 'absolute', top: '50px', left: '35%', transform: 'translate(0, 25%)' }}
+    >
       <Paper
         elevation={24}
         sx={{
-          position: 'absolute',
-          left: '50%',
-          transform: 'translate(-50%, 25%)',
           pointerEvents: 'auto',
           padding: '40px'
         }}

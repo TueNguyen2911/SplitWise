@@ -1,6 +1,5 @@
 .App {
   text-align: center;
-  background-color: #61dafb;
 }
 
 .App-logo {
@@ -119,4 +118,50 @@
 
 .error-input {
   border-color: red;
+}
+
+/* Landing Page */
+.each-slide > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  height: 350px;
+}
+
+.each-slide span {
+  padding: 20px;
+  font-size: 20px;
+  background: #efefef;
+  text-align: center;
+}
+
+.login-signup-paper {
+  border: solid 1px;
+  width: 500px;
+  height: 700px;
+  margin: 0 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Landing */
+.SlideShow {
+  background-color: #013a6b;
+  background-image: -webkit-linear-gradient(30deg, #013a6b 50%, #2484dd 50%);
+}
+.landing-meme-img {
+  width: 450px;
+  border: solid 1px;
+  margin: 0 50px;
+}
+.landing-row-flex-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  height: 95vh;
 }

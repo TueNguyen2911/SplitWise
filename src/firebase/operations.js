@@ -196,3 +196,19 @@ export const createGroup = async (groupValue) => {
     return { msg: null, error: error.message }
   }
 }
+
+export const getMemeImages = async (limit = 8) => {
+  try {
+    const urls = []
+    let name = ''
+    for (let i = 1; i <= limit; i++) {
+      name = `gs://splitwise-83ca0.appspot.com/meme${i}.jpg`
+      const url = await getDownloadURL(ref(storage, name))
+      console.log(url)
+      urls.push(url)
+    }
+    return { urls: urls, error: null }
+  } catch (error) {
+    return { urls: [], error: error.message }
+  }
+}

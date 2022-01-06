@@ -23,6 +23,8 @@ import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
 import ShowMembers from './features/showMembers/ShowMembers'
 import AppMessage from './features/appMessage/AppMessage'
+import SignUp from './features/signUp/SignUp'
+import Slideshow from './features/landingPage/SlideImages'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -95,13 +97,12 @@ function App() {
         </>
       ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
         <>
-          <MainContent
-            className="main-content"
-            appState={appState.data}
-            SBWidth={appState.data.sideBarWidth}
-          >
-            <Login />
-          </MainContent>
+          {/* <Route path="/login">
+              <Login />
+            </Route> */}
+          {/* <Route path="/signup"> */}
+          <Slideshow />
+          {/* </Route> */}
         </>
       ) : null}
     </div>

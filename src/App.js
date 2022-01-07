@@ -58,9 +58,9 @@ function App() {
 
   return (
     <div className="App">
-      {groups.status === 'succeeded' && userAuth.userId ? (
-        <>
-          <Router>
+      <Router>
+        {groups.status === 'succeeded' && userAuth.userId ? (
+          <>
             <AppMessage />
             <RouteGuard components={[<SidebarContainer />]} />
             <MainContent
@@ -93,13 +93,15 @@ function App() {
                 </>
               ) : null}
             </MainContent>
-          </Router>
-        </>
-      ) : !userAuth.userId ? (
-        <>
-          <Landing />
-        </>
-      ) : null}
+          </>
+        ) : !userAuth.userId ? (
+          <>
+            <Route exact path="/">
+              <Landing />
+            </Route>
+          </>
+        ) : null}
+      </Router>
     </div>
   )
 }

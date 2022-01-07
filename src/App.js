@@ -25,6 +25,7 @@ import ShowMembers from './features/showMembers/ShowMembers'
 import AppMessage from './features/appMessage/AppMessage'
 import SignUp from './features/signUp/SignUp'
 import Landing from './features/landingPage/Landing'
+import { HashRouter } from 'react-router-dom'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -57,7 +58,7 @@ function App() {
   }, [currentUser])
   return (
     <div className="App">
-      <Router>
+      <HashRouter>
         {groups.status === 'succeeded' && userAuth.userId ? (
           <>
             <AppMessage />
@@ -93,14 +94,14 @@ function App() {
               ) : null}
             </MainContent>
           </>
-        ) : !userAuth.userId ? (
+        ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
           <>
             <Route exact path="/">
               <Landing />
             </Route>
           </>
         ) : null}
-      </Router>
+      </HashRouter>
     </div>
   )
 }

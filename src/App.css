@@ -136,16 +136,15 @@
   text-align: center;
 }
 
-.login-signup-paper {
+.signup-paper {
   border: solid 1px;
   width: 500px;
-  height: 700px;
-  margin: 0 50px;
+  height: 90vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  margin-left: 20vw;
 }
 
 /* Landing */
@@ -156,15 +155,26 @@
   background-color: #013a6b;
   background-image: -webkit-linear-gradient(30deg, #013a6b 50%, #2484dd 50%);
 }
+.login-paper {
+  border: solid 1px;
+  width: 500px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 20vw;
+}
 .landing-meme-img {
   width: 450px;
   border: solid 1px;
-  margin: 0 50px;
+  margin-right: 20vw;
 }
 .landing-row-flex-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  height: 95vh;
+  height: 100vh;
+  overflow-x: hidden;
 }

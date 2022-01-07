@@ -28,7 +28,7 @@ export const usersSlice = createSlice({
     saveUsersData: (state, action) => {
       state.data = action.payload
     },
-    reset: () => initialState
+    resetUsers: () => initialState
   },
   extraReducers: (builder) => {
     builder
@@ -48,6 +48,6 @@ export const usersSlice = createSlice({
   }
 })
 // Action creators are generated for each case reducer function
-export const { saveUsersData } = usersSlice.actions
+export const { saveUsersData, resetUsers } = usersSlice.actions
 
 export default usersSlice.reducer

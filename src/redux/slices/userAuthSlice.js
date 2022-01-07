@@ -30,7 +30,7 @@ export const userAuthSlice = createSlice({
       state.userId = action.payload
       state.status = 'succeeded'
     },
-    reset: () => initialState
+    resetUserAuth: () => initialState
   },
   extraReducers: (builder) => {
     builder
@@ -60,6 +60,6 @@ export const userAuthSlice = createSlice({
   }
 })
 // Action creators are generated for each case reducer function
-export const { saveUserAuth } = userAuthSlice.actions
+export const { saveUserAuth, resetUserAuth } = userAuthSlice.actions
 
 export default userAuthSlice.reducer

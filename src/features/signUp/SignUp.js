@@ -61,7 +61,7 @@ const SignUp = () => {
   }
   return (
     <div className="SignUp">
-      <Paper elevation={10} className="login-signup-paper">
+      <Paper elevation={10} className="signup-paper">
         <img className="SWLogo" alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
         <Formik>
           <Form

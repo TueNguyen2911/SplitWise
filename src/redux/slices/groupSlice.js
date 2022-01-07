@@ -37,7 +37,7 @@ export const groupSlice = createSlice({
     saveGroupData: (state, action) => {
       state.data = action.payload
     },
-    reset: () => initialState
+    resetGroup: () => initialState
   },
   extraReducers: (builder) => {
     builder
@@ -67,6 +67,6 @@ export const groupSlice = createSlice({
   }
 })
 // Action creators are generated for each case reducer function
-export const { saveGroupData } = groupSlice.actions
+export const { saveGroupData, resetGroup } = groupSlice.actions
 
 export default groupSlice.reducer

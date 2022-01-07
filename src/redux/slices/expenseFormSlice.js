@@ -33,11 +33,11 @@ export const expenseFormSlice = createSlice({
   name: 'expenseForm',
   initialState,
   reducers: {
+    resetExpenseForm: () => initialState,
     saveExpenseFormData: (state, action) => {
       state.data = action.payload
       state.status = 'succeeded'
-    },
-    reset: () => initialState
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -66,6 +66,6 @@ export const expenseFormSlice = createSlice({
   }
 })
 // Action creators are generated for each case reducer function
-export const { saveGroupData } = expenseFormSlice.actions
+export const { saveGroupData, resetExpenseForm } = expenseFormSlice.actions
 
 export default expenseFormSlice.reducer

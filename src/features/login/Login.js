@@ -32,7 +32,7 @@ const Login = () => {
   }
   return (
     <div className="Login">
-      <Paper elevation={10} className="login-signup-paper">
+      <Paper elevation={10} className="login-paper">
         <img alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
         <form onSubmit={loginForm.handleSubmit} style={{ width: '70%' }}>
           <TextField

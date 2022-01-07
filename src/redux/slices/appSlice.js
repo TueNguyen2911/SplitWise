@@ -21,11 +21,12 @@ export const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
+    resetAppState: () => initialState,
     saveAppState: (state, action) => {
       state.data = { ...state.data, ...action.payload }
     }
   }
 })
 
-export const { saveAppState } = appSlice.actions
+export const { saveAppState, resetAppState } = appSlice.actions
 export default appSlice.reducer

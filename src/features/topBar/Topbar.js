@@ -19,13 +19,18 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import MoreIcon from '@mui/icons-material/MoreVert'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../../redux/slices/userAuthSlice'
+import { logout, resetUserAuth } from '../../redux/slices/userAuthSlice'
 import GroupIcon from '@mui/icons-material/Group'
-import { saveAppState } from '../../redux/slices/appSlice'
+import { saveAppState, resetAppState } from '../../redux/slices/appSlice'
+import { resetCurrentUser } from '../../redux/slices/currentUserSlice'
+import { resetGroup } from '../../redux/slices/groupSlice'
+import { resetUsers } from '../../redux/slices/usersSlice'
+import { resetExpenseForm } from '../../redux/slices/expenseFormSlice'
 const TopbarContainer = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.currentUser)
   const appState = useSelector((state) => state.app)
+  const userAuth = useSelector((state) => state.app)
   const topBarRef = useRef()
   const [anchorEl, setAnchorEl] = useState(null)
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
@@ -51,8 +56,14 @@ const TopbarContainer = () => {
     setMobileMoreAnchorEl(event.currentTarget)
   }
   const logOut = () => {
+    dispatch(resetAppState())
+    dispatch(resetCurrentUser())
+    dispatch(resetExpenseForm())
+    dispatch(resetGroup())
+    dispatch(resetUsers())
+
     dispatch(logout())
-    window.location.reload()
+    dispatch(resetUserAuth()) //reset UserAuth after
   }
   const copyId = (e) => {
     navigator.clipboard.writeText(e.target.innerText.substring(1)) //remove the hashtag symbol
@@ -141,6 +152,7 @@ const TopbarContainer = () => {
       }, 3000)
     }
   }, [isIdCopied])
+
   return (
     <div className="TopBar" ref={topBarRef}>
       <nav>

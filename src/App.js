@@ -55,7 +55,6 @@ function App() {
       dispatch(getAllGroups())
     }
   }, [currentUser])
-
   return (
     <div className="App">
       <Router>

@@ -15,7 +15,11 @@ const Preview = ({ imgFile }) => {
   return (
     <div>
       {preview ? (
-        <Avatar alt="avatar" src={preview} sx={{ width: 100, height: 100, border: 'solid' }} />
+        <Avatar
+          alt="avatar"
+          src={preview}
+          sx={{ width: '5vh', height: '5vh', border: 'solid 1px' }}
+        />
       ) : (
         <Avatar
           alt="avatar"

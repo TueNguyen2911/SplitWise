@@ -62,14 +62,15 @@ const SignUp = () => {
   return (
     <div className="SignUp">
       <Paper elevation={10} className="signup-paper">
-        <img className="SWLogo" alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
+        <Typography variant="h6">Create an account</Typography>
         <Formik>
           <Form
             style={{
               display: 'flex',
               flexDirection: 'column',
               width: '70%',
-              justifyContent: 'center'
+              justifyContent: 'flex-start',
+              gap: '5px'
             }}
             onSubmit={signUpForm.handleSubmit}
           >
@@ -83,7 +84,6 @@ const SignUp = () => {
               error={signUpForm.errors.name && Boolean(signUpForm.touched.name)}
               helperText={signUpForm.touched.name && signUpForm.errors.name}
             />
-            <br />
             <TextField
               fullWidth
               type="text"
@@ -94,7 +94,6 @@ const SignUp = () => {
               error={signUpForm.errors.userName && Boolean(signUpForm.touched.userName)}
               helperText={signUpForm.touched.userName && signUpForm.errors.userName}
             />
-            <br />
             <TextField
               fullWidth
               type="email"
@@ -105,7 +104,6 @@ const SignUp = () => {
               error={signUpForm.errors.email && Boolean(signUpForm.touched.email)}
               helperText={signUpForm.touched.email && signUpForm.errors.email}
             />
-            <br />
             <TextField
               fullWidth
               type="password"
@@ -116,7 +114,6 @@ const SignUp = () => {
               error={signUpForm.errors.password && Boolean(signUpForm.touched.password)}
               helperText={signUpForm.touched.password && signUpForm.errors.password}
             />
-            <br />
             <TextField
               fullWidth
               type="password"
@@ -129,28 +126,6 @@ const SignUp = () => {
               }
               helperText={signUpForm.touched.confirmPassword && signUpForm.errors.confirmPassword}
             />
-            <br />
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-evenly' }}>
-              <Button
-                onClick={() => inputImgRef.current.click()}
-                htmlFor="billImg"
-                color="secondary"
-                variant="outlined"
-              >
-                <FileUploadIcon /> Avatar
-              </Button>
-              <input
-                ref={inputImgRef}
-                name="avatar"
-                id="avatar"
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={(e) => setAvatar(e)}
-              />
-              <Preview imgFile={imgFile} />
-            </div>
-            <br />
             <Button fullWidth variant="contained" type="submit">
               Sign up
             </Button>

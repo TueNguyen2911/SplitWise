@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Slide } from 'react-slideshow-image'
 import { getMemeImages } from '../../firebase/operations'
 import { Typography, Box, Paper } from '@mui/material'
 import { useSelector } from 'react-redux'

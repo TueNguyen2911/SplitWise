@@ -1,11 +1,10 @@
 import React from 'react'
-import CloseIcon from '@mui/icons-material/Close'
 const Preview = ({ url }) => {
   const imgstyle = {
     width: '300px'
   }
   return (
-    <div>
+    <div className="Preview">
       {url ? (
         <div className="img-wrap">
           <img style={imgstyle} src={url} alt="preview" />

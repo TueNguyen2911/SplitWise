@@ -160,7 +160,19 @@ export const uploadImgToStorage = async (imageFile) => {
     return { url: null, name: null, error: error.message }
   }
 }
-
+export const changeUserAvatar = async (imageFile) => {
+  try {
+    const { currentUser } = store.getState()
+    const { url, error } = await uploadImgToStorage(imageFile)
+    if (url) {
+      await updateDoc(doc(db, 'Users', currentUser.data.id), { avatar: url })
+      return { msg: `Changed avatar`, error: null }
+    }
+  } catch (error) {
+    console.log(error)
+    return { msg: null, error: error.message }
+  }
+}
 export const deleteImgToStorage = async (name) => {
   try {
     await deleteObject(ref(storage, name))

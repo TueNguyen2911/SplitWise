@@ -40,16 +40,28 @@ export default function GroupCard() {
           data.map((elem, index) => (
             <StyledCard key={index} onClick={() => history.push(`/group/${elem.id}`)}>
               <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
-                <CardMedia
+                {/* <CardMedia
                   component="img"
                   sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
                   image={elem.avatar}
-                  alt="elem.name"
+                  alt={elem.name}
+                /> */}
+                <Avatar
+                  src={elem.avatar}
+                  alt={elem.name}
+                  sx={{ border: 'solid 1px', width: '165px', height: '165px' }}
                 />
                 <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
                   {elem.members.map((elem, index) => {
                     if (index < 8) {
-                      return <Avatar key={index} alt={elem.name} src={elem.avatar} />
+                      return (
+                        <Avatar
+                          sx={{ zIndex: '1' }}
+                          key={index}
+                          alt={elem.name}
+                          src={elem.avatar}
+                        />
+                      )
                     }
                     return null
                   })}

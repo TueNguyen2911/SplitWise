@@ -1,17 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { auth } from '../../firebase/config'
-import {
-  Menu,
-  Badge,
-  MenuItem,
-  AppBar,
-  Toolbar,
-  Box,
-  Divider,
-  Avatar,
-  Button,
-  Tooltip
-} from '@mui/material'
+import { Menu, Badge, MenuItem, AppBar, Toolbar, Box, Avatar, Button, Tooltip } from '@mui/material'
 import IconButton from '@mui/material/IconButton'
 import AccountCircle from '@mui/icons-material/AccountCircle'
 import MailIcon from '@mui/icons-material/Mail'
@@ -26,35 +15,28 @@ import { resetCurrentUser } from '../../redux/slices/currentUserSlice'
 import { resetGroup } from '../../redux/slices/groupSlice'
 import { resetUsers } from '../../redux/slices/usersSlice'
 import { resetExpenseForm } from '../../redux/slices/expenseFormSlice'
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate'
+import Preview from './Preview'
 const TopbarContainer = () => {
   const dispatch = useDispatch()
   const currentUser = useSelector((state) => state.currentUser)
   const appState = useSelector((state) => state.app)
   const userAuth = useSelector((state) => state.app)
   const topBarRef = useRef()
+  const editImgRef = useRef()
   const [anchorEl, setAnchorEl] = useState(null)
-  const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null)
   const [isIdCopied, setIsIdCopied] = useState(false)
+  const [imgFile, setImgFile] = useState(null)
 
   const isMenuOpen = Boolean(anchorEl)
-  const isMobileMenuOpen = Boolean(mobileMoreAnchorEl)
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget)
   }
-
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null)
-  }
-
   const handleMenuClose = () => {
     setAnchorEl(null)
-    handleMobileMenuClose()
   }
-
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget)
-  }
+  const setAvatar = (file) => {}
   const logOut = () => {
     dispatch(resetAppState())
     dispatch(resetCurrentUser())
@@ -88,59 +70,31 @@ const TopbarContainer = () => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={handleMenuClose}>{currentUser.data.userName}</MenuItem>
+      <MenuItem
+        onClick={(e) => {
+          editImgRef.current.click()
+        }}
+      >
+        <AddPhotoAlternateIcon />
+        Edit user avatar
+        <input
+          ref={editImgRef}
+          name="avatar"
+          id="avatar"
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          onChange={(e) => {
+            setImgFile(e.target.files[0])
+          }}
+        />
+      </MenuItem>
       <Tooltip title={isIdCopied ? `Copied ${currentUser.data.id}` : 'Copy id'}>
         <MenuItem onClick={(e) => copyId(e)}>#{currentUser.data.id}</MenuItem>
       </Tooltip>
     </Menu>
   )
 
-  const mobileMenuId = 'primary-search-account-menu-mobile'
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right'
-      }}
-      id={mobileMenuId}
-      keepMounted={false}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right'
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon color="primary" />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton size="large" aria-label="show 17 new notifications" color="inherit">
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>{currentUser.data.name}</p>
-      </MenuItem>
-    </Menu>
-  )
   useEffect(() => {
     dispatch(saveAppState({ topBarHeight: topBarRef.current.offsetHeight }))
   }, [])
@@ -156,11 +110,12 @@ const TopbarContainer = () => {
   return (
     <div className="TopBar" ref={topBarRef}>
       <nav>
+        <Preview file={imgFile} setImgFile={setImgFile} closeMenu={handleMenuClose} />
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static" sx={{ background: 'white' }}>
             <Toolbar>
               <Box sx={{ flexGrow: 1 }} />
-              <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Box>
                 <Button sx={{ margin: '5px' }} onClick={logOut} variant="outlined">
                   <LogoutIcon />
                 </Button>
@@ -203,21 +158,8 @@ const TopbarContainer = () => {
                   <Avatar alt="Remy Sharp" src={currentUser.data.avatar} />
                 </IconButton>
               </Box>
-              <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-                <IconButton
-                  size="large"
-                  aria-label="show more"
-                  aria-controls={mobileMenuId}
-                  aria-haspopup="true"
-                  onClick={handleMobileMenuOpen}
-                  color="inherit"
-                >
-                  <MoreIcon color="primary" />
-                </IconButton>
-              </Box>
             </Toolbar>
           </AppBar>
-          {renderMobileMenu}
           {renderMenu}
         </Box>
       </nav>

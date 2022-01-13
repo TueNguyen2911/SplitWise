@@ -20,6 +20,7 @@ const Preview = ({ userId, setUserId }) => {
   const [inGroup, setInGroup] = useState(false) //check if user is already in group
   const { groupId } = useParams()
   const dispatch = useDispatch()
+
   const handleAddClick = async () => {
     const { msg, error } = await addMember(user, groupId)
     const { successMsg, errorMsg } = JSON.parse(JSON.stringify(appState.data))
@@ -30,11 +31,6 @@ const Preview = ({ userId, setUserId }) => {
     } else {
       errorMsg.push(error)
       dispatch(saveAppState({ errorMsg: errorMsg }))
-    }
-    if (!error) {
-      setUserId('')
-      const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
-      dispatch(getUsersByIds(memberIds))
     }
   }
   useEffect(() => {

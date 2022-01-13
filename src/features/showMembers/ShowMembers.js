@@ -33,11 +33,19 @@ const ShowMembers = () => {
   }
   useEffect(() => {
     if (groups.status === 'succeeded' && groupId) {
+      console.log('mounted')
       const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
       dispatch(getUsersByIds(memberIds))
     }
-  }, [groups.status, groupId])
+  }, [])
 
+  useEffect(() => {
+    if (groups.updateStatus === 'succeeded') {
+      const { memberIds } = groups.data.filter((elem) => elem.id === groupId)[0]
+      console.log('in showmember', memberIds.length)
+      dispatch(getUsersByIds(memberIds))
+    }
+  }, [groups.updateStatus])
   if (appState.data.showMembers && users.status === 'succeeded') {
     return (
       <div className="ShowMembers" style={showMembersStyle}>

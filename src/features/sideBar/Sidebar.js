@@ -3,11 +3,19 @@ import { useSelector } from 'react-redux'
 import SquircleContainer from './SquircleContainer'
 
 const SidebarContainer = ({ setCreateGroup, setSBWidth }) => {
-  const groups = useSelector((state) => state.groups.data)
+  const { status, data } = useSelector((state) => state.groups)
   return (
-    <>
-      <SquircleContainer setCreateGroup={setCreateGroup} setSBWidth={setSBWidth} groups={groups} />
-    </>
+    <div>
+      {status === 'succeeded' ? (
+        <>
+          <SquircleContainer
+            setCreateGroup={setCreateGroup}
+            setSBWidth={setSBWidth}
+            groups={data}
+          />
+        </>
+      ) : null}
+    </div>
   )
 }
 

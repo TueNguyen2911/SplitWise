@@ -8,6 +8,7 @@ const initialState = { data: [], status: 'idle', error: null }
 export const getUsersByIds = createAsyncThunk('users/getUsersByIds', async (userId, thunkAPI) => {
   try {
     let userData = []
+    console.log(userId)
     const userSnapPromises = userId.map((id) => getDoc(doc(db, 'Users', id)))
 
     for (let i = 0; i < userSnapPromises.length; i++) {

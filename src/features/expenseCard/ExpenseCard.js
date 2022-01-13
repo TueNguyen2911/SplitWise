@@ -14,6 +14,9 @@ import GroupMenu from './GroupMenu'
 import AddMemberPaper from '../addMember/AddMemberPaper'
 import { getUsersByIds } from '../../redux/slices/usersSlice'
 import CreateExpense from '../createExpense/CreateExpense'
+import { collection, doc, onSnapshot, query, where } from 'firebase/firestore'
+import { db } from '../../firebase/config'
+import { updateGroupById } from '../../redux/slices/groupSlice'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
@@ -55,6 +58,16 @@ const ExpenseCard = () => {
 
   useEffect(() => {
     dispatch(saveAppState({ membersIcon: true }))
+    const q = query(collection(db, 'Groups'), where('id', '==', `${groupId}`))
+    const unsub = onSnapshot(q, (snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'modified') {
+          console.log('Modified')
+          const groupObj = change.doc.data()
+          dispatch(updateGroupById(groupObj))
+        }
+      })
+    })
   }, [])
 
   return (

@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import { kickMember } from '../../firebase/operations'
 import { saveAppState } from '../../redux/slices/appSlice'
 
-const MemberDetails = ({ users, id, anchorEl, handleMemberDetailsClose }) => {
+const MemberDetails = ({ users, id, anchorEl = null, handleMemberDetailsClose }) => {
   const isMenuOpen = Boolean(anchorEl)
   const poppedUser = users.data.filter((elem) => elem.id === id)[0]
   const appState = useSelector((state) => state.app)

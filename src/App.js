@@ -1,31 +1,28 @@
-import React from 'react'
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import SidebarContainer from './features/sideBar/Sidebar'
 import TopbarContainer from './features/topBar/Topbar'
-import { createTheme } from '@mui/system'
 import { MainContent } from './styles/MainContent'
 import GroupCard from './features/groupCard/GroupCard'
-import { useState, useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import ExpenseCard from './features/expenseCard/ExpenseCard'
-import ExpenseTab from './features/expenseTab/ExpenseTab'
 import ExpenseForm from './features/expenseForm/ExpenseForm'
 import Login from './features/login/Login'
 import RouteGuard from './features/routeGuard/RouteGuard'
-import { getAuth, signOut, onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
 import './App.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { auth } from './firebase/config'
 import { saveUserAuth } from './redux/slices/userAuthSlice'
 import { getUserById } from './redux/slices/currentUserSlice'
 import { getAllGroups } from './redux/slices/groupSlice'
-import { doc, getDoc, onSnapshot } from 'firebase/firestore'
+import { doc, onSnapshot } from 'firebase/firestore'
 import { db } from './firebase/config'
 import CreateGroup from './features/createGroup/CreateGroup'
 import ShowMembers from './features/showMembers/ShowMembers'
 import AppMessage from './features/appMessage/AppMessage'
-import SignUp from './features/signUp/SignUp'
 import Landing from './features/landingPage/Landing'
 import { HashRouter } from 'react-router-dom'
+import { CircularProgress } from '@mui/material'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
@@ -33,6 +30,7 @@ function App() {
   const appState = useSelector((state) => state.app)
   const groups = useSelector((state) => state.groups)
   const dispatch = useDispatch()
+  //check user's auth state
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -42,7 +40,7 @@ function App() {
       }
     })
   }, [auth, dispatch])
-
+  //listen to changes to current user
   useEffect(() => {
     if (userAuth.status === 'succeeded' && userAuth.userId) {
       const unsub = onSnapshot(doc(db, 'Users', userAuth.userId), (doc) => {
@@ -56,10 +54,17 @@ function App() {
       dispatch(getAllGroups())
     }
   }, [currentUser])
+
+  useEffect(() => {
+    if (currentUser.status === 'succeeded') {
+      dispatch(getAllGroups())
+    }
+  }, [currentUser])
+
   return (
     <div className="App">
       <HashRouter>
-        {groups.status === 'succeeded' && userAuth.userId ? (
+        {userAuth.status === 'succeeded' && userAuth.userId ? (
           <>
             <AppMessage />
             <RouteGuard components={[<SidebarContainer />]} />
@@ -100,7 +105,11 @@ function App() {
               <Landing />
             </Route>
           </>
-        ) : null}
+        ) : (
+          <>
+            <CircularProgress />
+          </>
+        )}
       </HashRouter>
     </div>
   )

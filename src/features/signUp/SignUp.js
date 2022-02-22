@@ -70,7 +70,7 @@ const SignUp = () => {
               flexDirection: 'column',
               width: '70%',
               justifyContent: 'flex-start',
-              gap: '10px'
+              gap: '7px'
             }}
             onSubmit={signUpForm.handleSubmit}
           >

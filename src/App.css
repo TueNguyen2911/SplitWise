@@ -147,7 +147,8 @@
 .signup-paper {
   border: solid 1px;
   width: 30vw;
-  height: auto;
+  height: 100%;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -157,7 +158,8 @@
 .login-paper {
   border: solid 1px;
   width: 30vw;
-  height: 90vh;
+  height: 100%;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;

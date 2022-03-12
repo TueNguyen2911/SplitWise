@@ -34,7 +34,8 @@ const Login = () => {
     <div className="Login">
       <Paper elevation={10} className="login-paper">
         <img alt="logo" src={`${process.env.PUBLIC_URL}/images/logo.png`} />
-        <form onSubmit={loginForm.handleSubmit} style={{ width: '70%' }}>
+        <br />
+        <form onSubmit={loginForm.handleSubmit} style={{ width: '90%' }}>
           <TextField
             fullWidth
             id="email"
@@ -63,6 +64,7 @@ const Login = () => {
           </Button>
           <div>{userAuth.status === 'failed' ? userAuth.error : null}</div>
         </form>
+        <br />
         <Link component="button" variant="body2" onClick={toSignup}>
           Sign-up here
         </Link>

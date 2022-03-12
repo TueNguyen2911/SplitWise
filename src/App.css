@@ -146,35 +146,71 @@
 }
 .signup-paper {
   border: solid 1px;
-  width: 30vw;
-  height: 100%;
+  width: 35vw;
   padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-left: 20vw;
+  margin-left: 10vw;
 }
-.login-paper {
-  border: solid 1px;
-  width: 30vw;
-  height: 100%;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-left: 15vw;
-}
-.landing-meme-img {
-  width: 25vw;
-  border: solid 1px;
-  margin-right: 15vw;
-}
+
 .landing-row-flex-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   height: 100vh;
+}
+
+.login-paper {
+  border: solid 1px;
+  width: 35vw;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10vw;
+}
+
+.landing-meme-img {
+  width: 25vw;
+  border: solid 1px;
+  margin-right: 15vw;
+}
+
+@media (max-width: 1024px) {
+  .login-paper {
+    width: 45vw;
+    padding: 10px;
+    margin-left: 5vw;
+  }
+  .landing-meme-img {
+    width: 35vw;
+    border: solid 1px;
+    margin-right: 5vw;
+  }
+  .signup-paper {
+    width: 45vw;
+    padding: 10px;
+    margin-left: 5vw;
+  }
+}
+@media (max-width: 425px) {
+  .login-paper {
+    width: 85vw;
+    padding: 10px;
+    margin: 0;
+  }
+  .landing-meme-img {
+    width: 85vw;
+    border: solid 1px;
+    margin: 0;
+  }
+  .signup-paper {
+    width: 85vw;
+    padding: 10px;
+    margin: 0;
+  }
 }

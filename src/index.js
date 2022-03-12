@@ -5,11 +5,13 @@ import App from './App'
 import { store } from './redux/store'
 import { Provider } from 'react-redux'
 import * as serviceWorker from './serviceWorker'
-
+import { StyledEngineProvider } from '@mui/material/styles'
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <App />
+      <StyledEngineProvider injectFirst>
+        <App />
+      </StyledEngineProvider>
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

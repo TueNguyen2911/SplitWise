@@ -23,13 +23,23 @@ import AppMessage from './features/appMessage/AppMessage'
 import Landing from './features/landingPage/Landing'
 import { HashRouter } from 'react-router-dom'
 import { CircularProgress } from '@mui/material'
+import { ThemeProvider, useTheme, createTheme } from '@mui/material/styles'
 
 function App() {
   const userAuth = useSelector((state) => state.userAuth)
   const currentUser = useSelector((state) => state.currentUser)
   const appState = useSelector((state) => state.app)
-  const groups = useSelector((state) => state.groups)
   const dispatch = useDispatch()
+  const theme = createTheme({
+    breakpoints: {
+      values: {
+        mobile: 426,
+        tablet: 769,
+        laptop: 1025,
+        desktop: 1440
+      }
+    }
+  })
   //check user's auth state
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -63,54 +73,56 @@ function App() {
 
   return (
     <div className="App">
-      <HashRouter>
-        {userAuth.status === 'succeeded' && userAuth.userId ? (
-          <>
-            <AppMessage />
-            <RouteGuard components={[<SidebarContainer />]} />
-            <MainContent
-              className="main-content"
-              appState={appState.data}
-              SBWidth={appState.data.sideBarWidth}
-            >
-              <RouteGuard components={[<TopbarContainer />]} />
+      <ThemeProvider theme={theme}>
+        <HashRouter>
+          {userAuth.status === 'succeeded' && userAuth.userId ? (
+            <>
+              <AppMessage />
+              <RouteGuard components={[<SidebarContainer />]} />
+              <MainContent
+                className="main-content"
+                appState={appState.data}
+                SBWidth={appState.data.sideBarWidth}
+              >
+                <RouteGuard components={[<TopbarContainer />]} />
 
+                <Route exact path="/">
+                  <RouteGuard components={[<GroupCard />]} />
+                </Route>
+                <Route exact path="/group/:groupId">
+                  <RouteGuard components={[<ExpenseCard />]} />
+                  {appState.data.showMembers ? <ShowMembers /> : null}
+                </Route>
+                <Route exact path="/form">
+                  <RouteGuard components={[<ExpenseForm />]} />
+                </Route>
+                <Route exact path="/login">
+                  <RouteGuard path={'/login'} components={[<Login />]} />
+                </Route>
+                <Route path="/group/:groupId/expense/:expenseFormId">
+                  <ExpenseForm />
+                  <ShowMembers />
+                </Route>
+                {appState.data.createGroup ? (
+                  <>
+                    <CreateGroup />
+                  </>
+                ) : null}
+              </MainContent>
+            </>
+          ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
+            <>
               <Route exact path="/">
-                <RouteGuard components={[<GroupCard />]} />
+                <Landing />
               </Route>
-              <Route exact path="/group/:groupId">
-                <RouteGuard components={[<ExpenseCard />]} />
-                {appState.data.showMembers ? <ShowMembers /> : null}
-              </Route>
-              <Route exact path="/form">
-                <RouteGuard components={[<ExpenseForm />]} />
-              </Route>
-              <Route exact path="/login">
-                <RouteGuard path={'/login'} components={[<Login />]} />
-              </Route>
-              <Route path="/group/:groupId/expense/:expenseFormId">
-                <ExpenseForm />
-                <ShowMembers />
-              </Route>
-              {appState.data.createGroup ? (
-                <>
-                  <CreateGroup />
-                </>
-              ) : null}
-            </MainContent>
-          </>
-        ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
-          <>
-            <Route exact path="/">
-              <Landing />
-            </Route>
-          </>
-        ) : (
-          <>
-            <CircularProgress />
-          </>
-        )}
-      </HashRouter>
+            </>
+          ) : (
+            <>
+              <CircularProgress />
+            </>
+          )}
+        </HashRouter>
+      </ThemeProvider>
     </div>
   )
 }

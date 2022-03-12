@@ -1,4 +1,4 @@
-import { Button, Card, Input, Link, TextField, Typography } from '@mui/material'
+import { Button, Card, Input, Link, makeStyles, TextField, Typography } from '@mui/material'
 import { Box, styled } from '@mui/system'
 import { useFormik, Formik, Form } from 'formik'
 import * as yup from 'yup'
@@ -68,9 +68,9 @@ const SignUp = () => {
             style={{
               display: 'flex',
               flexDirection: 'column',
-              width: '70%',
+              width: '90%',
               justifyContent: 'flex-start',
-              gap: '7px'
+              gap: '15px'
             }}
             onSubmit={signUpForm.handleSubmit}
           >

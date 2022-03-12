@@ -9,9 +9,7 @@ import { StyledEngineProvider } from '@mui/material/styles'
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <StyledEngineProvider injectFirst>
-        <App />
-      </StyledEngineProvider>
+      <App />
     </Provider>
   </React.StrictMode>,
   document.getElementById('root')

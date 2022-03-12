@@ -9,3 +9,6 @@ export const MainContent = styled.div`
       ? 'none'
       : 'auto'};
 `
+export const ErrorText = styled.div`
+  color: #ff0000;
+`

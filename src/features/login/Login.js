@@ -9,6 +9,7 @@ import { doc, getDoc } from 'firebase/firestore'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { login } from '../../redux/slices/userAuthSlice'
 import { saveAppState } from '../../redux/slices/appSlice'
+import { ErrorText } from '../../styles/styledComponents'
 
 const Login = () => {
   const userAuth = useSelector((state) => state.userAuth)
@@ -62,7 +63,7 @@ const Login = () => {
           <Button color="primary" variant="contained" fullWidth type="submit">
             Log-in
           </Button>
-          <div>{userAuth.status === 'failed' ? userAuth.error : null}</div>
+          <ErrorText>{userAuth.status === 'failed' ? userAuth.error : null}</ErrorText>
         </form>
         <br />
         <Link component="button" variant="body2" onClick={toSignup}>

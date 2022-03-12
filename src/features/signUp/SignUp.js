@@ -13,12 +13,13 @@ import { useSelector } from 'react-redux'
 import { saveAppState } from '../../redux/slices/appSlice'
 import FileUploadIcon from '@mui/icons-material/FileUpload'
 import { createGroup, createUser, uploadImgToStorage } from '../../firebase/operations'
-
+import { ErrorText } from '../../styles/styledComponents'
 const SignUp = () => {
   const dispatch = useDispatch()
   const groups = useSelector((state) => state.groups)
   const appState = useSelector((state) => state.app)
   const [imgFile, setImgFile] = useState(null)
+  const [signUpError, setSignUpError] = useState('')
   const validationSchema = yup.object().shape({
     name: yup.string().required('Name is required'),
     userName: yup.string().max(15).required('Username is required'),
@@ -49,6 +50,9 @@ const SignUp = () => {
     validationSchema: validationSchema,
     onSubmit: async () => {
       const { msg, error } = await createUser(signUpForm.values)
+      if (error) {
+        setSignUpError(error)
+      }
     }
   })
   const inputImgRef = useRef()
@@ -59,6 +63,7 @@ const SignUp = () => {
   const toLogin = () => {
     dispatch(saveAppState({ login: true }))
   }
+
   return (
     <div className="SignUp">
       <Paper elevation={10} className="signup-paper">
@@ -129,6 +134,7 @@ const SignUp = () => {
             <Button fullWidth variant="contained" type="submit">
               Sign up
             </Button>
+            <ErrorText>{signUpError}</ErrorText>
           </Form>
         </Formik>
         <Link component="button" variant="body2" onClick={toLogin}>

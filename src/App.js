@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Redirect, Route } from 'react-router-dom'
 import SidebarContainer from './features/sideBar/Sidebar'
 import TopbarContainer from './features/topBar/Topbar'
-import { MainContent } from './styles/MainContent'
+import { MainContent } from './styles/styledComponents'
 import GroupCard from './features/groupCard/GroupCard'
 import React, { useEffect } from 'react'
 import ExpenseCard from './features/expenseCard/ExpenseCard'
@@ -110,7 +110,8 @@ function App() {
                 ) : null}
               </MainContent>
             </>
-          ) : userAuth.status === 'succeeded' && !userAuth.userId ? (
+          ) : (userAuth.status === 'succeeded' && !userAuth.userId) ||
+            userAuth.status === 'failed' ? (
             <>
               <Route exact path="/">
                 <Landing />

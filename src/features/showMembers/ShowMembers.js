@@ -29,7 +29,7 @@ const ShowMembers = () => {
     minHeight: '94vh',
     width: '220px',
     backgroundColor: '#dedede',
-    right: anchorEl ? '17px' : '0px'
+    right: '0px'
   }
   useEffect(() => {
     if (groups.status === 'succeeded' && groupId) {

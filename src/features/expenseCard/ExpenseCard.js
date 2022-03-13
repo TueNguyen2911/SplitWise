@@ -19,24 +19,32 @@ import { db } from '../../firebase/config'
 import { updateGroupById } from '../../redux/slices/groupSlice'
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  margin: '10px 10px',
-  width: '330px',
   boxShadow: '1px 1px 2px',
-  [theme.breakpoints.down('md')]: {
-    width: '280px'
+  height: '350px',
+  [theme.breakpoints.up('largeLaptop')]: {
+    flexBasis: 'calc(25% - 10px)' //5px is the gap
+  },
+  [theme.breakpoints.between('laptop', 'largeLaptop')]: {
+    flexBasis: 'calc(33.33% - 10px)'
+  },
+  [theme.breakpoints.between('sm', 'laptop')]: {
+    flexBasis: 'calc(50% - 10px)'
+  },
+  [theme.breakpoints.down('sm')]: {
+    flexBasis: '100%'
   },
   transition: 'width 0.2s',
   '&:hover': {
-    opacity: '0.8'
+    opacity: '0.5'
   }
 }))
 
-const CardContainer = styled('div')({
-  margin: '20px 20px',
+const CardContainer = styled('div')(({ theme }) => ({
+  margin: '10px 10px',
   display: 'flex',
-  flexDirection: 'row',
+  gap: '10px',
   flexWrap: 'wrap'
-})
+}))
 
 const ExpenseCard = () => {
   const groups = useSelector((state) => state.groups)
@@ -84,14 +92,13 @@ const ExpenseCard = () => {
                   key={index}
                   onClick={() => history.push(`${url}/expense/${elem.expenseFormId}`)}
                 >
-                  <Box>
-                    <CardMedia
-                      component="img"
-                      sx={{ objectFit: 'contain', height: '150px' }}
-                      image={elem.image}
-                      alt="Expense Img"
-                    />
-                  </Box>
+                  <CardMedia
+                    component="img"
+                    sx={{ objectFit: 'contain' }}
+                    height="70%"
+                    image={elem.image}
+                    alt="Expense Img"
+                  />
                   <Divider />
                   <CardContent sx={{ textAlign: 'left' }}>
                     {elem.name} <br /> {elem.date}

@@ -6,28 +6,19 @@ import { saveAppState } from '../../redux/slices/appSlice'
 import React, { useEffect } from 'react'
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  margin: '10px 10px',
   boxShadow: '1px 1px 2px',
   height: '350px',
   [theme.breakpoints.up('largeLaptop')]: {
-    maxWidth: '25%',
-    flexGrow: 1,
-    flexBasis: 0
+    flexBasis: 'calc(25% - 10px)' //5px is the gap
   },
   [theme.breakpoints.between('laptop', 'largeLaptop')]: {
-    maxWidth: '33.33%',
-    flexGrow: 1,
-    flexBasis: 0
+    flexBasis: 'calc(33.33% - 10px)'
   },
   [theme.breakpoints.between('sm', 'laptop')]: {
-    minWidth: '45%',
-    maxWidth: '50%',
-    flexGrow: 1,
-    flexBasis: 0
+    flexBasis: 'calc(50% - 10px)'
   },
   [theme.breakpoints.down('sm')]: {
-    width: '100%',
-    flexGrow: 1
+    flexBasis: '100%'
   },
   transition: 'width 0.2s',
   '&:hover': {
@@ -38,10 +29,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 const CardContainer = styled('div')(({ theme }) => ({
   margin: '10px 10px',
   display: 'flex',
-  gap: '5px',
-  // [theme.breakpoints.down('tablet')]: {
-  //   gap: '1px'
-  // },
+  gap: '10px',
   flexWrap: 'wrap'
 }))
 

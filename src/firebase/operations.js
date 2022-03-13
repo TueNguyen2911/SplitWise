@@ -6,6 +6,10 @@ import { store } from '../redux/store'
 import { uploadBytes, getDownloadURL, deleteObject, ref } from 'firebase/storage'
 import uniqid from 'uniqid'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
+
+const default_avatar =
+  'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/default-avatar.png?alt=media&token=80f5dc7c-6d20-4784-bf6c-5406eb02af06'
+
 export const getUserById = async (userId) => {
   try {
     const docSnap = await getDoc(doc(db, 'Users', userId))
@@ -136,8 +140,7 @@ export const createExpense = async (groupId, expense) => {
     modExpense.date = modExpense.date.toLocaleDateString()
     modExpense.from = modExpense.from.toLocaleDateString()
     modExpense.to = modExpense.to.toLocaleDateString()
-    modExpense.image =
-      'https://firebasestorage.googleapis.com/v0/b/splitwise-83ca0.appspot.com/o/EF.png?alt=media&token=76e7dc30-a362-4539-b57a-5c9dc8a777f7'
+    modExpense.image = default_avatar
     modExpense.expenseFormId = expenseForm.id
     groupData.expenses.push(modExpense)
     await updateDoc(doc(db, 'Groups', groupData.id), groupData)

@@ -7,10 +7,27 @@ import React, { useEffect } from 'react'
 
 const StyledCard = styled(Card)(({ theme }) => ({
   margin: '10px 10px',
-  width: '330px',
   boxShadow: '1px 1px 2px',
-  [theme.breakpoints.down('md')]: {
-    width: '280px'
+  height: '350px',
+  [theme.breakpoints.up('largeLaptop')]: {
+    maxWidth: '25%',
+    flexGrow: 1,
+    flexBasis: 0
+  },
+  [theme.breakpoints.between('laptop', 'largeLaptop')]: {
+    maxWidth: '33.33%',
+    flexGrow: 1,
+    flexBasis: 0
+  },
+  [theme.breakpoints.between('sm', 'laptop')]: {
+    minWidth: '45%',
+    maxWidth: '50%',
+    flexGrow: 1,
+    flexBasis: 0
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '100%',
+    flexGrow: 1
   },
   transition: 'width 0.2s',
   '&:hover': {
@@ -18,12 +35,15 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }))
 
-const CardContainer = styled('div')({
-  margin: '20px 20px',
+const CardContainer = styled('div')(({ theme }) => ({
+  margin: '10px 10px',
   display: 'flex',
-  flexDirection: 'row',
+  gap: '5px',
+  // [theme.breakpoints.down('tablet')]: {
+  //   gap: '1px'
+  // },
   flexWrap: 'wrap'
-})
+}))
 
 export default function GroupCard() {
   const { data, status } = useSelector((state) => state.groups)
@@ -39,36 +59,11 @@ export default function GroupCard() {
         {status === 'succeeded' ? (
           data.map((elem, index) => (
             <StyledCard key={index} onClick={() => history.push(`/group/${elem.id}`)}>
-              <Box sx={{ display: 'flex', flex: '1 1 0px' }}>
-                {/* <CardMedia
-                  component="img"
-                  sx={{ width: '165px', height: '165px', objectFit: 'contain' }}
-                  image={elem.avatar}
-                  alt={elem.name}
-                /> */}
-                <Avatar
-                  src={elem.avatar}
-                  alt={elem.name}
-                  sx={{ border: 'solid 1px', width: '165px', height: '165px' }}
-                />
-                <Box sx={{ width: '165px', display: 'flex', flexWrap: 'wrap', paddingLeft: '5px' }}>
-                  {elem.members.map((elem, index) => {
-                    if (index < 8) {
-                      return (
-                        <Avatar
-                          sx={{ zIndex: '1' }}
-                          key={index}
-                          alt={elem.name}
-                          src={elem.avatar}
-                        />
-                      )
-                    }
-                    return null
-                  })}
-                </Box>
-              </Box>
+              <CardMedia component="img" height="70%" image={elem.avatar} alt={elem.name} />
               <Divider />
-              <CardContent sx={{ textAlign: 'left' }}>{elem.name}</CardContent>
+              <CardContent sx={{ textAlign: 'left' }}>
+                {elem.name} <br /> {elem.memberIds.length} members
+              </CardContent>
             </StyledCard>
           ))
         ) : (

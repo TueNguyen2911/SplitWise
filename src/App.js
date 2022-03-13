@@ -33,10 +33,17 @@ function App() {
   const theme = createTheme({
     breakpoints: {
       values: {
-        mobile: 426,
-        tablet: 769,
-        laptop: 1025,
-        desktop: 1440
+        mobileS: 320,
+        mobile: 425,
+        tablet: 768,
+        laptop: 1024,
+        largeLaptop: 1440,
+        desktop: 2560,
+        xs: 0,
+        sm: 600,
+        md: 900,
+        lg: 1200,
+        xl: 1536
       }
     }
   })

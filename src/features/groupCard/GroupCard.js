@@ -59,7 +59,13 @@ export default function GroupCard() {
         {status === 'succeeded' ? (
           data.map((elem, index) => (
             <StyledCard key={index} onClick={() => history.push(`/group/${elem.id}`)}>
-              <CardMedia component="img" height="70%" image={elem.avatar} alt={elem.name} />
+              <CardMedia
+                sx={{ objectFit: 'contain' }}
+                component="img"
+                height="70%"
+                image={elem.avatar}
+                alt={elem.name}
+              />
               <Divider />
               <CardContent sx={{ textAlign: 'left' }}>
                 {elem.name} <br /> {elem.memberIds.length} members
